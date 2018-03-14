@@ -1,0 +1,174 @@
+﻿  <head>
+
+<!--    <script type="text/javascript">var dojoConfig = { parseOnLoad: true };</script> -->
+
+    <!--
+<script type="text/javascript" src="./jQueryUI/js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="./jQueryUI/js/jquery-ui-1.8.20.custom.min.js"></script
+      <script type="text/javascript" src="./jQueryUI/js/jquery-1.7.2.min.js"></script>
+
+      <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=2.7"></script>
+      <script type="text/javascript" src="http://phx-gis-dev-ags/Images/appScripts/DevelopmentDashboard/esriMap.js"></script>
+	<script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.0"></script>-->
+      
+<!--      <script type="text/javascript" src="./esriMapFunctions/layerObject.js"></script>
+     <script type="text/javascript" src="./esriMapFunctions/identify.js"></script>
+-->
+<script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=2.7"></script>
+<script type="text/javascript" src="./esriMapFunctions/drawingAndBasemap.js"></script>
+<script type="text/javascript" src="./esriMapFunctions/locateAndRouting.js"></script>
+<script type="text/javascript" src="./esriMapFunctions/mapAndMouseInfo.js"></script>    
+<script type="text/javascript" src="./esriMap.js"></script>
+<!--<script type="text/javascript" src="./postLoadView.js"></script>
+<script type="text/javascript" src="./view.js"></script>-->
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.7.1/dijit/themes/claro/claro.css">
+<!--<link type="text/css" rel="stylesheet" href="./DashboardStyle.css">-->
+<!--link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.0/js/esri/dijit/css/Popup.css">
+<link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.0/js/dojo/dijit/themes/claro/claro.css">-->
+<!--<script src="./view.js" type="text/javascript"></script>-->
+<!--<link rel="stylesheet" href="./jQueryUI/development-bundle/themes/base/jquery.ui.all.css">-->
+   <style>
+      body {
+	background: grey;
+      }
+      .myWidgets { 
+	border: solid black 2px;
+	width:444px;
+      }
+      #centerPanel 
+      {
+	height: 100%;
+      }
+      #myMap 
+      {
+	margin-left:5px;
+	margin-bottom:5px;
+	margin-right:5px;
+	background-color:white;
+	border:solid 2px cornflowerblue;
+	display: block;
+	height: 333px !important;
+	position: relative;
+	width: 666px !important;
+      }
+      .myWidgets 
+      {
+	border: solid 2px cornflowerblue;
+	margin:5px;
+	width:inherit;
+	height:inherit;
+	font-family: Monospace Sans-Serif;
+	font-size:.9em;
+      }
+      #buttonBox button {
+	width: 100%;
+      }
+      #buttonBox textarea {
+	width: 100%;
+      }
+      #buttonBox input {
+	width: 100%;
+      }
+
+      #basemap {
+	background-color:white;
+	border:solid 2px cornflowerblue;
+	height: 222px !important;
+	position: relative;
+	overflow:auto;
+	width:385px !important;
+	padding: 8px 4px 8px 4px;
+	display: inline-block  !important;
+	vertical-align:top;
+      }
+      .esriBasemapGalleryNode {
+	/*
+	display: inline;
+	float: none !important;
+	margin: 1px 2px 0 !important;
+	width: auto !important;
+	*/  
+      }
+      #buttonBox {
+	background-color:white;
+	border:solid 2px cornflowerblue;
+	position: relative;
+	width: 230px; !important;
+	height: 222px;
+	padding: 8px 4px 8px 4px;
+	display: inline-block !important;
+	vertical-align:top;
+	float:right;
+      }
+      #resultsdiv {
+	background-color:white;
+	border:solid 2px cornflowerblue;
+	position: relative;
+	/*	width: 230px; !important; */
+	overflow: scroll;
+	height: 222px;
+	padding: 8px 4px 8px 4px;
+/*	display: inline-block !important;
+	vertical-align:top;
+	float:right;
+	*/
+	display:none;
+      }
+
+      #controls {
+	width: 666px;
+	height: 333px;
+      }
+    </style>
+
+    <script type="text/javascript">
+      //window.onload =  dojo.addOnLoad(init);
+    dojo.addOnLoad(init);
+      </script>
+
+    </head>
+    <!--<body onload="init();" class="claro">-->
+      <!--      <body onload="init();">  -->
+	<body class="claro">
+	<div class="page">
+	  <div class="header">
+	  </div>
+	   <div class="main">
+	    <div id="centerPanel">
+	      <div id="myMap">	     </div>
+	      <div id="controls">
+		<div id="basemap" Title="Basemaps" class="myWidgets"><div id="basemapGallery"></div></div>
+		<div id="buttonBox" class="myWidgets">
+		  <button onclick="locate();" dojotype="dijit.form.Button">Locate Place: </button>		  
+		  <input type="text" id="address" value="Enter Address" />
+
+		  <button data-dojo-type="dijit.form.Button" onclick="toolbar.activate(esri.toolbars.Draw.POINT);map.hideZoomSlider();"
+		    data-dojo-props="onClick:function(){toolbar.activate(esri.toolbars.Draw.POINT);map.hideZoomSlider();}">
+		    Point</button>
+		  <button data-dojo-type="dijit.form.Button" onclick="toolbar.activate(esri.toolbars.Draw.MULTI_POINT);map.hideZoomSlider();"
+		    data-dojo-props="onClick:function(){toolbar.activate(esri.toolbars.Draw.MULTI_POINT);map.hideZoomSlider();}">
+		    Multipoint</button>
+		  <button data-dojo-type="dijit.form.Button" onclick="toolbar.activate(esri.toolbars.Draw.POLYLINE);map.hideZoomSlider();"
+		    data-dojo-props="onClick:function(){toolbar.activate(esri.toolbars.Draw.POLYLINE);map.hideZoomSlider();}">
+		    Polyline</button>
+		  <button data-dojo-type="dijit.form.Button" onclick="toolbar.activate(esri.toolbars.Draw.POLYGON);map.hideZoomSlider();"
+		    data-dojo-props="onClick:function(){toolbar.activate(esri.toolbars.Draw.POLYGON);map.hideZoomSlider();}">
+		    Polygon</button>
+		  <button data-dojo-type="dijit.form.Button" onclick="toolbar.deactivate();map.showZoomSlider();"
+		    data-dojo-props="onClick:function(){toolbar.deactivate();map.showZoomSlider();}">
+		    Quit Drawing</button>
+		  <textarea id="textBoxGeometry" name="textBoxGeometry"></textarea>
+		</div><!--END OF MAIN HEADER-->
+		<!--		<div id="currentextent"> </div> -->
+		<div id="resultsdiv"> </div>
+		<!-- <span id="labelMapExtent"></span> -->
+		<span id="labelMapCoords"></span>
+	      </div>
+	    </div><!--END OF CENTER PANEL-->
+
+
+
+
+	  </div> <!--END OF Main-->
+	</div>
+

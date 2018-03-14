@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <header name = "Access-Control-Allow-Origin" value = "*" />
+      <script type="text/javascript" src="./vendor/js/jquery.js"></script>
+      <script type="text/javascript" src="./script/vendor/jquery-ui18.js"></script>
+      <script src="./vendor/js/bootstrap/js/bootstrap.min.js"></script>
+      <script src="./vendor/js/angular.js"></script>
+      <script src="./vendor/js/angular-route.js"></script>
+      <link href="./vendor/js/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+      <link href="./vendor/js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+      <link rel='stylesheet prefetch' href='https://netdna.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.css'>
+      <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/css?family=Dosis|Candal'>
+      <link rel="shortcut icon" href="./model/home/images/favicon.png" />
+      <meta http-equiv="Access-Control-Allow-Origin" content="*">
+      <meta content="en-us" http-equiv="Content-Language">
+      <meta charset="utf-8">
+      <meta content="An Interesting Title Goes Here" name="title">
+      <title>Raspberry Pi - Surveillance Camera</title>
+      <style type="text/css">
+body {
+  background-color: #FFF;
+  margin: 30px;
+  margin-top: 10px;
+}
+#contentContainer{
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+#video, #controls{
+  width: 640px;
+  height: 480px;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#controls{
+  z-index:10;
+}
+
+
+
+#thing {
+  position: relative;
+  left: 50px;
+  top: 50px;
+  transition: left .5s cubic-bezier(.42,-0.3,.78,1.25), 
+    top .5s cubic-bezier(.42,-0.3,.78,1.25);
+}
+      </style>
+      <script>
+function rotate(dir){
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/rotate?'+dir);
+  xhr.send(null);
+}
+function image_effect(){
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/image_effect');
+  xhr.send(null);
+}
+function contrast(){
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/contrast');
+  xhr.send(null);
+}
+function saturation(){
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/saturation');
+  xhr.send(null);
+}
+function brightness(){
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/brightness');
+  xhr.send(null);
+}
+click=0
+x=0
+y=0
+w=1
+h=1
+function getClickPosition(e) {
+  var parentPosition = getPosition(e.currentTarget);
+  var xPosition = e.clientX - parentPosition.x - (theThing.clientWidth / 2);
+  var yPosition = e.clientY - parentPosition.y - (theThing.clientHeight / 2);
+  if(click==0){
+    x=  xPosition;
+    y= yPosition;
+    click=1
+  }
+  else{
+    click=0
+    w = xPosition - x;
+    h = yPosition - y;
+    var box = [x/640.0, y/480.0,w/640.0,h/480.0]
+    console.log(box);
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/chngCoor?'+box);
+    xhr.send(null);
+
+  }
+  theThing.style.left = xPosition + "px";
+  theThing.style.top = yPosition + "px";
+}
+
+// Helper function to get an element's exact position
+function getPosition(el) {
+  var xPos = 0;
+  var yPos = 0;
+  while (el) {
+    if (el.tagName == "BODY") {
+      var xScroll = el.scrollLeft || document.documentElement.scrollLeft;
+      var yScroll = el.scrollTop || document.documentElement.scrollTop;
+
+      xPos += (el.offsetLeft - xScroll + el.clientLeft);
+      yPos += (el.offsetTop - yScroll + el.clientTop);
+    } else {
+      // for all other non-BODY elements
+      xPos += (el.offsetLeft - el.scrollLeft + el.clientLeft);
+      yPos += (el.offsetTop - el.scrollTop + el.clientTop);
+    }
+
+    el = el.offsetParent;
+  }
+  return {
+    x: xPos,
+    y: yPos
+  };
+}
+      </script>
+      <body class="bg-light">
+	<div class="container">
+	  <div class="row">
+	    <div class="col-md-8" id="contentContainer">
+	      <img id="image" src="stream.mjpg">
+	      <div id="controls">
+		<img id="thing" alt="the thing" crossOrigin="anonymous" height="67" style="background:black;" width="5px">
+	      </div>
+	    </div>
+
+	    <div class="col-md-1">
+	      <button onclick="rotate(10)">rotate right</button>
+	      <button onclick="rotate(-10)">rotate left</button>
+	      <button onclick="image_effect()">image_effect</button>
+	      <button onclick="contrast()">contrast</button>
+	      <button onclick="saturation()">saturation</button>
+	      <button onclick="brightness()">brightness</button>
+	    </div>
+	  </div>
+	</div>
+
+      </body>
+      <script>
+var theThing = document.querySelector("#thing");
+var container = document.querySelector("#contentContainer");
+container.addEventListener("click", getClickPosition, false);
+      </script>
+</html>
+

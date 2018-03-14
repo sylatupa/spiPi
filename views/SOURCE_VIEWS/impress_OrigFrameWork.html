@@ -1,0 +1,77 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1024" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>impress.js | presentation tool based on the power of CSS3 transforms and transitions</title>
+  <meta name="description" content="impress.js is a presentation tool based on the power of CSS3 transforms and transitions in modern browsers and inspired by the idea behind prezi.com." />
+  <meta name="author" content="Shaun Ylatupa-McWhorter" />
+  <link href="./impress.css" rel="stylesheet" /> 
+  <link rel="shortcut icon" href="favicon.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <script >
+    console.log('start')
+    function toDivFromJson() {
+      console.log('function')
+      //alert("Lets Impress")
+
+      //	      document.getelementbyid("bored").innerhtml = "<q>aren't you just <b>bored</b> with all those slides-based presentations?</q>"
+      JSOND = {
+	1:"<q>Aren't you just <b>bored</b> with all those slides-based presentations?</q>",
+	2:"<q>Don't you think that presentations given <strong>in modern browsers</strong> shouldn't <strong>copy the limits</strong> of 'classic' slide decks?</q>",
+	3:"<q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q>",
+	4:"<span class='try'>then you should try</span>        <h1>impress.js<sup>*</sup></h1>        <span class='footnote'><sup>*</sup> no rhyme intended</span></div>",
+        5:"<p>It's a <strong>presentation tool</strong> <br/>        inspired by the idea behind <a href='http://prezi.com'>prezi.com</a> <br/>        and based on the <strong>power of CSS3 transforms and transitions</strong> in modern browsers.</p></div>",
+        6:"<p>visualize your <b>big</b> <span class='thoughts'>thoughts</span></p></div>",
+	7:"<p>and <b>tiny</b> ideas</p></div>",
+    8:"<p>by <b class='positioning'>positioning</b>, <b class='rotating'>rotating</b> and <b class='scaling'>scaling</b> them on an infinite canvas</p></div>",
+    9:"<p>the only <b>limit</b> is your <b class='imagination'>imagination</b></p></div>",
+    10:"<p>want to know more?</p>       <q><a href='http://github.com/bartaz/impress.js'>use the source</a>, Luke!</q></div>",
+    11:"<p>one more thing...</p></div>",
+    12:"<p><span class='have'>have</span> <span class='you'>you</span> <span class='noticed'>noticed</span> <span class='its'>it's</span> <span class='in'>in</span> <b>3D<sup>*</sup></b>?</p>        <span class='footnote'>* beat that, prezi ;)</span></div"
+      };
+
+      for(var i=1; i<99; i++) {
+      document.getElementById(i).innerHTML = JSOND[i]
+      };
+    }
+  </script>
+</head>
+
+<body class="impress-not-supported" onload="toDivFromJson()">
+  <div class="fallback-message"><p>Your browser <b>doesn't support the features required</b></p></div>
+  <div id="impress">
+    <div id="1" class="step slide" data-x="-1000" data-y="-1500" ></div>
+    <div id="2" class="step slide" data-x="0" data-y="-1500"></div>
+    <div id="3" class="step slide" data-x="1000" data-y="-1500"></div>
+    <div id="4" class="step" data-x="0" data-y="0" data-scale="4"> </div>
+    <div id="5" class="step" data-x="850" data-y="3000" data-rotate="90" data-scale="5"></div>
+    <div id="6" class="step" data-x="3500" data-y="2100" data-rotate="180" data-scale="6"></div>
+    <div id="7" class="step" data-x="2825" data-y="2325" data-z="-3000" data-rotate="300" data-scale="1"></div>
+    <div id="8" class="step" data-x="3500" data-y="-850" data-rotate="270" data-scale="6"></div>
+    <div id="9" class="step" data-x="6700" data-y="-300" data-scale="6"></div>
+    <div id="10" class="step" data-x="6300" data-y="2000" data-rotate="20" data-scale="4"></div>
+    <div id="11" class="step" data-x="6000" data-y="4000" data-scale="2"></p></div>
+    <div id="12" class="step" data-x="6200" data-y="4300" data-z="-100" data-rotate-x="-40" data-rotate-y="10" data-scale="2"></div>
+    <div id="13" class="step" data-x="3000" data-y="1500" data-scale="10"></div>
+  </div>
+  <div class="hint">
+    <p>Use a spacebar or arrow keys to navigate</p>
+  </div>
+  <script>
+    if ("ontouchstart" in document.documentElement) { 
+      document.querySelector(".hint").innerHTML = "<p>Tap on the left or right to navigate</p>";
+    }
+  </script>
+
+  <script src="./impress.js"></script>
+  <script>impress().init();</script>
+
+  <!-- social, tracking etc, ignore -->
+
+  <div style="position: fixed; bottom: 10px; left: 10px; pointer-events: auto;">
+    fixed at bottom block
+  </div>
+
+</body>
+</html>

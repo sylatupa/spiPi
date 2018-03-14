@@ -1,0 +1,91 @@
+﻿      body {
+	background: grey;
+      }
+      .myWidgets { 
+	border: solid black 2px;
+	width:444px;
+      }
+      #centerPanel 
+      {
+	height: 100%;
+      }
+      #myMap 
+      {
+	margin-left:5px;
+	margin-bottom:5px;
+	margin-right:5px;
+	background-color:white;
+	border:solid 2px cornflowerblue;
+	display: block;
+	height: 333px !important;
+	position: relative;
+	width: 666px !important;
+      }
+      .myWidgets 
+      {
+	border: solid 2px cornflowerblue;
+	margin:5px;
+	width:inherit;
+	height:inherit;
+	font-family: Monospace Sans-Serif;
+	font-size:.9em;
+      }
+      #buttonBox button {
+	width: 100%;
+      }
+      #buttonBox textarea {
+	width: 100%;
+      }
+      #buttonBox input {
+	width: 100%;
+      }
+
+      #basemap {
+	background-color:white;
+	border:solid 2px cornflowerblue;
+	height: 222px !important;
+	position: relative;
+	overflow:auto;
+	width:385px !important;
+	padding: 8px 4px 8px 4px;
+	display: inline-block  !important;
+	vertical-align:top;
+      }
+      .esriBasemapGalleryNode {
+	/*
+	display: inline;
+	float: none !important;
+	margin: 1px 2px 0 !important;
+	width: auto !important;
+	*/  
+      }
+      #buttonBox {
+	background-color:white;
+	border:solid 2px cornflowerblue;
+	position: relative;
+	width: 230px; !important;
+	height: 222px;
+	padding: 8px 4px 8px 4px;
+	display: inline-block !important;
+	vertical-align:top;
+	float:right;
+      }
+      #resultsdiv {
+	background-color:white;
+	border:solid 2px cornflowerblue;
+	position: relative;
+	/*	width: 230px; !important; */
+	overflow: scroll;
+	height: 222px;
+	padding: 8px 4px 8px 4px;
+/*	display: inline-block !important;
+	vertical-align:top;
+	float:right;
+	*/
+	display:none;
+      }
+
+      #controls {
+	width: 666px;
+	height: 333px;
+      }

@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Example of a simple class diagram using the jsUML2 library</title>
+
+    <script type="text/javascript"  src="./jQueryUI/js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript"  src="./jQueryUI/development-bundle/ui/jquery.effects.core.js"></script>
+    <script type="text/javascript"  src="./jQueryUI/development-bundle/ui/jquery-ui-1.8.20.custom.js"></script>
+
+    <style type="text/css">
+      #navPanel {
+	position:fixed;
+      }
+
+      .driftPanel {
+	border: 2px solid green;
+	position: relative;
+	float: left;
+	width: 999px;
+	height 666px;
+      }
+      #driftPanel1 {
+	background: black;
+	top: 55px;
+	left: 15px;
+      }
+      #driftPanel {
+	background: blue;
+	top: 66px;
+	left: 900px;
+      }
+      body {
+	background: gray;
+	overflow: auto;
+      }
+
+    </style>
+    <script type="text/javascript">
+      var toc;
+      var br;
+      var h4;
+      var newA;
+      function tocBuilder() {
+
+	toc = document.getElementById("toc");
+	toc.innerHTML = "";
+	br = document.createElement('br');
+	$h4Array = jQuery("h5");
+	for (i = 0; i < $h4Array.length ; i++) {
+	  h5 = $h4Array[i];
+	  h5Children = h5.children;
+	  for (j = 0; h5Children.length; j++) {
+	    newA = document.createElement('div');
+
+	    var innerHtml = h5Children[j].innerHTML;
+	    var aIdName = "id"+innerHtml;
+	    newA.setAttribute('id',aIdName);
+	    newA.innerHTML = innerHtml;
+	    toc.appendChild(newA);
+	    newA = document.getElementById(aIdName);
+	    newA.setAttribute('onclick', 'document.getElementById(\''+aIdName+'\').scrollIntoView()');
+	  }
+	}
+
+      }
+    </script>
+  </head>
+  <body onload="tocBuilder()">
+    <div id="toc" style="background:white">
+      <br>
+      <br>
+      <br>
+    </div>
+    <div id="navPanel">
+
+      <a href="#driftPanel">Go to the driftPanel    </a>
+      <br>
+      <a href="#driftPanel1">Go to the driftPanel1     </a>
+    </div>
+
+    <div id="driftPanel"  class="driftPanel">
+      driftPanel
+
+      <br>	<br>	<br>	<br>	<br>
+    </div>
+    <div id="driftPanel1" class="driftPanel" >
+      driftPanel1
+
+      <br>	<br>	<br>	<br>	<br>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <h4>first</h4>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <h4>second</h4>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <h4>third</h4>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <h4>fourth</h4>
+  </body>
+</html>
+
+

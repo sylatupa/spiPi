@@ -1,0 +1,28 @@
+<body>
+
+  <!--  <div class="panel panel-primary " ng-controller="Weather"> -->
+    <div class="panel panel-primary ">
+      <div class="panel-heading">
+	<h3 class="panel-title">{{external_links.title}}</h3>
+      </div>
+      <div class="panel-body">
+	<div >
+	  <a  ng-repeat="item in external_links.data.children" class="info-box" title="{{item.data.title}} | Reddit Score: {{item.data.score}}" data-toggle="tooltip" href="{{item.data.url}}" >
+	    <img src="{{item.data.thumbnail}}" alt=""></img>
+	  </a>
+	</div>
+
+      </div>
+
+    </div>
+  </div>
+  <style>
+    .alert-box {
+    }
+  </style> 
+  <script>
+    //'.weather-box'
+    $('info-box').tooltip();
+  </script>
+
+</body>

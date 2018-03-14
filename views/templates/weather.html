@@ -1,0 +1,29 @@
+<body>
+  <div class="panel panel-primary " ng-controller="Weather"  ng-hide="!weather.list.length">
+    <div class="panel-heading">
+      <h3 class="panel-title">{{weather.city.name}}, {{weather.city.country}} 7 Day Weather</h3>
+    </div>
+    <div class="panel-body" style="padding:.1em;font-size:.8em;">
+      <center>
+	<div ng-repeat="item in weather.list" style="horizontal-align:center; display:inline-block; width:14%; height:auto; margin:0px;border:1px solid cornflowerblue">
+	    <a class="weather-box" style="horizontal-align:center; display:inline-block;" title="{{item.weather[0].description}}" data-toggle="tooltip" href="#" data-original-title="">{{item.dt *1000 | date:'EEE'}}<br>
+	      <img  src="http://openweathermap.org/img/w/{{item.weather[0].icon}}.png" style="horizontal-align:center; width:80%;"></img><br>{{item.weather[0].main}} 
+	      <br>
+	       {{item.temp.min | number:0}}&deg;-{{item.temp.max | number:0}}&deg;
+	    </a>
+	    <hr style="margin:0px;">
+	</div>
+      </center>
+      </div>
+    </div>
+  </div>
+  <style>
+    .alert-box {
+    }
+  </style> 
+  <script>
+    //'.weather-box'
+    $('weather-box').tooltip();
+  </script>
+
+</body>

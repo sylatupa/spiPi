@@ -1,0 +1,49 @@
+<div class="row" ng-app="split_module">
+  <div class="large-6 large-offset-3">
+    <div class="jumbotron">
+      <h1 ng-bind-html="renderHtml(report.title)">
+	<!--	{{report.title}} -->
+      </h1>
+      <p ng-bind-html="renderHtml(report.description, 'h1')">
+      </p>
+    
+    
+    </div>
+YAY!!
+    <a href="./../WorkNotes.js"> testing worknotes direct </a>
+
+    <div class="row">
+      {{report}}
+      <div ng-repeat="item in report track by $index">
+	{{item}}
+	<div class="col-6 col-sm-6 col-lg-6 img-thumbnail">
+	  <p>
+	  <div class="context">
+
+	    
+	    <!--
+	    <a role="button"   href="#/detail?post={{item.id}}">
+	      <h2 class="post_title">{{item.title}}</h2>
+	    </a>
+
+	    <a ng-hide="!item.description.length"  class="btn btn-default" style="max-width:50%"  role="button"    href="#/detail?post={{item.id}}">
+ <img  ng-hide="!item.image[0].length" class="img-thumbnail img-responsive" src="{{item.image[0]}}"> 
+	    </a>
+	    <a ng-hide="item.description.length"  class="btn btn-default" style="max-width:100%"  role="button"    href="#/detail?post={{item.id}}">
+	      <img  ng-hide="!item.image[0].length" class="img-thumbnail img-responsive" src="{{item.image[0]}}">
+	    </a>
+-->	    
+	  </div>
+	  <br>
+	  <!--<div ng-hide="!item.id.length" >
+	    #{{item.id}}
+	  </div>
+	  -->
+	  </p>
+	</div>
+      </div>
+    </div>
+    <div id="pics"></div>
+  </div>
+
+</div>

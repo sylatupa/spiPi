@@ -1,0 +1,25 @@
+
+<div class="row" ng-controller="report_controller" ng-app="split_module">
+  <div class="large-6 large-offset-3">
+    <div class="jumbotron">
+      <h1>
+	{{title}}
+      </h1>
+      <p>
+      {{description}}</p>
+    </div>
+
+
+    <div class="row">
+      <div ng-repeat="item in post track by $index">
+	<div class="col-6 col-sm-6 col-lg-4 img-thumbnail">
+	  <h2>{{item.title}}</h2>
+	  {{item.id}} | {{item.description}}
+	  <div ng-repeat="img in item.image  track by $index">
+	    <img class="img-thumbnail" src="{{img}}">
+	  </div>
+	  <p><a role="button" href="#/detail?post={{report.portfolio.title}}" class="btn btn-default">View details</a></p> 
+	</div>
+      </div>
+
+    </div>
