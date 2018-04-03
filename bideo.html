@@ -9,38 +9,114 @@
       <script src="./vendor/js/angular-route.js"></script>
       <link href="./vendor/js/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
       <link href="./vendor/js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-      <link rel='stylesheet prefetch' href='https://netdna.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.css'>
-      <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/css?family=Dosis|Candal'>
-      <link rel="shortcut icon" href="./model/home/images/favicon.png" />
+      <!--<link rel="shortcut icon" href="./model/home/images/favicon.png" />-->
       <meta http-equiv="Access-Control-Allow-Origin" content="*">
       <meta content="en-us" http-equiv="Content-Language">
       <meta charset="utf-8">
       <meta content="An Interesting Title Goes Here" name="title">
       <title>Raspberry Pi - Surveillance Camera</title>
       <script>
+
+rotateCount=0
 function rotate(dir){
+
   var xhr = new XMLHttpRequest();
   xhr.open('GET', '/rotate?'+dir);
   xhr.send(null);
-}
-function image_effect(){
+  if(rotateCount==0){
+    $('#contentContainer').css("width", "480px");
+    $('#contentContainer').css("height", "640px");
+    rotateCount=1;
+  }
+  else {
+    rotateCount=0;
+    $('#contentContainer').css("width", "640px");
+    $('#contentContainer').css("height", "480px");
+
+  }
+
+function zoomIn(){
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', '/image_effect');
+  xhr.open('GET', '/zoomIn');
   xhr.send(null);
 }
-function contrast(){
+function zoomOut(){
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', '/contrast');
+  xhr.open('GET', '/zoomOut');
   xhr.send(null);
 }
-function saturation(){
+function shiftLeft(){
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', '/saturation');
+  xhr.open('GET', '/shiftLeft');
   xhr.send(null);
 }
-function brightness(){
+function shiftRight(value){
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', '/brightness');
+  xhr.open('GET', '/shiftRight');
+  xhr.send(null);
+}
+function shiftUp(){
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/shiftUp');
+  xhr.send(null);
+}
+function shiftDown(value){
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/shiftDown');
+  xhr.send(null);
+}
+	
+}
+function image_effect(value){
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/image_effect?'+value);
+  xhr.send(null);
+}
+function contrast(value){
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/contrast?'+value);
+  xhr.send(null);
+}
+function saturation(value){
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', "/saturation?"+value);
+  xhr.send(null);
+}
+function brightness(value){
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/brightness?'+value);
+  xhr.send(null);
+}
+function sharpness(value){
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/sharpness?'+value);
+  xhr.send(null);
+}
+function reset(value){
+  if(value=='effects') {
+    image_effect('none');
+contrast(0);
+saturation(0);
+brightness(52);
+sharpness(0);
+iso(450);
+
+ document.getElementById("contrast").value = 0
+       document.getElementById("saturation").value = 0
+       document.getElementById("brightness").value = 50
+       document.getElementById("iso").value = 400
+  }
+  if(value=='image'){
+    box = [0,0,640,480]
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/chngCoor?'+box);
+    xhr.send(null);
+  }
+}
+
+function iso(value){
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/iso?'+value);
   xhr.send(null);
 }
 click=0
@@ -61,7 +137,7 @@ function getClickPosition(e) {
     click=0
     w = xPosition - x;
     h = yPosition - y;
-    var box = [x/640.0, y/480.0,w/640.0,h/480.0]
+    var box = [x, y,w,h]
     console.log(box);
     var xhr = new XMLHttpRequest();
     xhr.open('GET', '/chngCoor?'+box);
@@ -96,6 +172,7 @@ function getPosition(el) {
     y: yPos
   };
 }
+
       </script>
 
 
@@ -116,10 +193,8 @@ body {
   top: 0;
   left: 0;
 }
-#controls{
-  z-index:10;
-}
 #thing {
+  z-index:10;
   position: relative;
   /*  left: 50px;
 top: 50px;
@@ -136,28 +211,84 @@ top: 50px;
 	  <div class="row">
 	    <div class="col-md-8" id="contentContainer">
 	      <img id="video" src="stream.mjpg">
-	      <div id="controls">
-		<img id="thing" alt="O" crossOrigin="anonymous">
-	      </div>
+	      <img id="thing" alt="O">
 	    </div>
-	    <div class="row">
-	      <div class="col-md-8">
-		<button class="btn btn-primary" onclick="rotate(10)">rotate right</button>
-		<button class="btn btn-primary" onclick="rotate(-10)">rotate left</button>
-		<button class="btn btn-primary" onclick="image_effect()">image_effect</button>
-		<button class="btn btn-primary" onclick="contrast()">contrast</button>
-		<button class="btn btn-primary" onclick="saturation()">saturation</button>
-		<button class="btn btn-primary" onclick="brightness()">brightness</button>
-	      </div>
+	    <div class="col-md-3">
+	      <button class="btn btn-primary" onclick="rotate('right')">rotate right</button>
+	      <button class="btn btn-primary" onclick="rotate('left')">rotate left</button>
+	      <button class="btn btn-info" onclick="reset('image')">Reset Zoom and Rotation</button>
+	      <button class="btn btn-info" onclick="reset('effects')">Reset Effects</button>
+
+<button class="btn btn-info" onclick="zoomIn()">+</button>
+<button class="btn btn-info" onclick="zoomOut()">-</button>
+<button class="btn btn-info" onclick="shiftLeft()">&#8592;</button>
+<button class="btn btn-info" onclick="shiftRight()">&rarr;</button>
+<button class="btn btn-info" onclick="shiftUp()">&uarr;</button>
+<button class="btn btn-info" onclick="shiftDown()">&darr;</button>
+	      
+	      <div  class="slidecontainer">Effect Types<select onclick="image_effect(this.value)" id="effectTypes"></select></div>
+	      <div class="slidecontainer">Sharpness <input type="range" min="-100" max="100" value="0" class="slider" id="contrast" onchange="sharpness(this.value)" ></div>
+	      <div class="slidecontainer">Contrast <input type="range" min="-100" max="100" value="0" class="slider" id="contrast" onchange="contrast(this.value)" ></div>
+	      <div class="slidecontainer">Saturation <input type="range" min="-100" max="100" value="0" class="slider" id="saturation" onchange="saturation(this.value)" ></div>
+	      <div class="slidecontainer">Brightness <input type="range" min="-0" max="100" value="50" class="slider" id="brightness" onchange="brightness(this.value)" ></div>
+	      <div class="slidecontainer">ISO <input type="range" min="100" max="1600" value="400" class="slider" id="iso" onchange="iso(this.value)" ></div>
 	    </div>
 	  </div>
 	</div>
-
+	</div>
       </body>
       <script>
 var theThing = document.querySelector("#thing");
 var container = document.querySelector("#contentContainer");
 container.addEventListener("click", getClickPosition, false);
+
+
+
+effectTypes = [ 'deinterlace1', 'colorpoint', 'denoise', 'gpen', 'negative', 'oilpaint', 'none', 'hatch', 'pastel', 'blur', 'watercolor', 'solarize', 'saturation', 'posterise', 'film', 'sketch', 'cartoon', 'emboss', 'deinterlace2', 'colorbalance', 'washedout', 'colorswap'];
+var x = document.getElementById("effectTypes");
+for(i=0; i < effectTypes.length; i++){
+  var option = document.createElement("option");
+  option.text = effectTypes[i];
+  x.add(option);
+}
+
       </script>
+      <style>
+.slidecontainer {
+  padding:5px;
+  margin:5px;
+}
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 15px;
+  border-radius: 5px;  
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%; 
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
+      </style>
+
+
 </html>
 

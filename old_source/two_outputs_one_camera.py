@@ -4,6 +4,9 @@ import logging
 import socketserver
 from threading import Condition
 import http.server as server
+import os
+from PIL import Image
+print(os.getcwd())
 
 class StreamingOutput(object):
     def __init__(self):
@@ -27,26 +30,24 @@ y = 0
 w = 1 
 h = 1
 camera = ''
-output = ''
+#output = ''
+area = (0,0,640,480)
 class StreamingHandler(server.BaseHTTPRequestHandler):
-    global camera, output,x,y,w,h,effect_no
+    global camera, output,output2,x,y,w,h,effect_no,frame,area
     def do_GET(self):
-        global x,y,w,h,effect_no
+        global x,y,w,h,effect_no,frame,area
         if self.path == '/':
             self.send_response(200)
             self.send_header('Location', '/index.html')
             self.end_headers()
         elif 'chngCoor' in self.path:
-            print('in')
             self.send_response(200)
             self.send_header('Location', '/index.html')
             self.end_headers()
-            #camera.stop_recording()
-            camera.crop = tuple(map(float,self.path.split('?')[1].split(',')))
+            area = tuple(map(int,self.path.split('?')[1].split(',')))
         elif 'rotate' in self.path:
             
             camera.rotation =  int(self.path.split('?')[1])
-            print(camera.rotation)
         elif 'sharpness' in self.path:
             if camera.sharpness >= 249:
                 camera.sharpness = 0
@@ -95,6 +96,8 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
         elif 'vflip' in self.path:            
             camera.vflip = False
 
+  
+
         if self.path == '/index.html':
             PAGE = open('bideo.html','r').read()
             content = PAGE.encode('utf-8')
@@ -126,27 +129,58 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                 logging.warning(
                     'Removed streaming client %s: %s',
                     self.client_address, str(e))
+        elif self.path == '/stream2.mjpg':
+            self.send_response(200)
+            self.send_header('Age', 0)
+            self.send_header('Cache-Control', 'no-cache, private')
+            self.send_header('Pragma', 'no-cache')
+            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME') #boundary=--jpgboundary')
+            self.end_headers()
+            try:
+                while True:
+                    with output2.condition:
+                        output2.condition.wait()
+                        frame2 = output2.frame
+                    imgByteArr = io.BytesIO()   
+                    frame21 = Image.open(io.BytesIO(frame2))
+                    frame21 = frame21.crop(area)
+                    frame21.save(imgByteArr, format='PNG')
+                    imgByteArr = imgByteArr.getvalue()                        
+                    self.wfile.write(b'--FRAME\r\n')
+                    self.send_header('Content-Type', 'image/jpeg')
+                    self.send_header('Content-Length', len(imgByteArr))
+                    self.end_headers()
+                    self.wfile.write(imgByteArr)
+                    self.wfile.write(b'\r\n')
+            except Exception as e:
+                print(e)
+                logging.warning(
+                    'Removed streaming client %s: %s',
+                    self.client_address, str(e))
+                
+        elif ".css" in self.path or ".js" in self.path or "png" in self.path or "jpg" in self.path :
+            PAGE = open(self.path[1:],'r').read()
+            content = PAGE.encode('utf-8')
+            self.send_response(200)
+            #self.send_header('Content-Type', 'text/html')
+            self.send_header('Content-Length', len(content))
+            self.end_headers()
+            self.wfile.write(content)
         else:
             self.send_response(200)
-
-            #self.send_error(404)
             self.end_headers()
 
 class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
 
-def startCamera(crop):
-    global camera, output
+def startCamera():
+    global camera, output, output2
     with picamera.PiCamera(resolution='640x480', framerate=24) as camera:
         output = StreamingOutput()
-        #Uncomment the next line to change your Pi's Camera rotation (in degrees)
-
-        #camera.rotation = 90
-        print('here')
-
-        #camera.crop = (.4,.4,.3,.3)
         camera.start_recording(output, format='mjpeg')
+        output2 = output
+        #camera.start_recording(output2, format='mjpeg')
         try:
             address = ('', 8000)
             server = StreamingServer(address, StreamingHandler)
@@ -155,7 +189,7 @@ def startCamera(crop):
         finally:
             camera.stop_recording()
 
-startCamera((0,0,1,1))
+startCamera()
     
 
 
