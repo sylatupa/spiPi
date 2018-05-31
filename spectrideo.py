@@ -1,17 +1,23 @@
 import io
 import picamera
 import logging
+
+LOG_FILENAME = 'logging.log'
+#logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
+import os.path, time
+import sys
 import socketserver
 from threading import Condition
 import http.server as server
 import os
 from PIL import Image
-print(os.getcwd())
-import imgencode
-
-#import spectrogram 
+from PIL import ImageChops
+import imgencode_proc 
+import json
+import play_sound as ps
+import imgprocessing_proc
 # This program has attribution to https://github.com/alexadam/img-encode
-
 class StreamingOutput(object):
     def __init__(self):
         self.frame = None
@@ -34,58 +40,87 @@ y = 0
 w = 1 
 h = 1
 camera = ''
-#output = ''
-
 
 # CAMERA RESOLUTION
-width = 640
-height = 480
-
+width = 40
+height = 40
+frameDiffCount = 0
+play_sound = ps.play_sound()
+image_encoder = imgencode_proc.encoder()
+image_processor = imgprocessing_proc.processor()
+encodeImage = False
 area = (0,0,width,height)
+triggerPixelBox = [0,0,5,5]
+diffThresh = 40000
+diffRate = 80
+
+ampThresh = 200
 class StreamingHandler(server.BaseHTTPRequestHandler):
-    global camera, output,x,y,w,h,effect_no,frame,area
+    global camera, output,x,y,width,height,effect_no,frame,area, encodeImage, frameDiffCount, diffThresh
     def do_GET(self):
-        global x,y,w,h,effect_no,frame,area
-        print(self.path)
+        global x,y,width,height,effect_no,frame,area,frameDiffCount
+        serverPath = os.path.dirname(os.path.realpath(__file__))
+        #logging.info('spyPi API CALL: '+self.path)
         if self.path == '/':
-            #self.send_response(200)
-            #self.send_header('Location', '/index.html')
             self.path = '/index.html'
-            #self.end_headers()
         elif 'chngCoor' in self.path:
             self.send_response(200)
             self.send_header('Location', '/index.html')
             self.end_headers()
             newCrd = list(map(float,self.path.split('?')[1].split(',')))
-            crop = (newCrd[0]/width, newCrd[1]/height, newCrd[2]/width, newCrd[3]/height)
+            crop = ((newCrd[0]/400), (newCrd[1]/400), (newCrd[2]/400), (newCrd[3]/400))
             camera.crop = crop
+        elif 'imageSize' in self.path:
+            PAGE = '["'+str(height)+'","'+ str(width) + '"]'
+            PAGE = json.loads(PAGE)
+            content = str(PAGE).encode('utf')
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.send_header('Content-Length', len(content))
+            self.wfile.write(content)
+        elif 'encodeImage' in self.path:
+            self.send_response(200)
+            self.end_headers()
+            if encodeImage==False:
+                encodeImage = True
+            else:
+                encodeImage=False
         elif 'rotate' in self.path:
             if self.path.split('?')[1] == 'right':
                 camera.rotation = camera.rotation + 90
-                #camera.resolution = str(height)+'x'+str(width)
             else:
                 camera.rotation = camera.rotation - 90
-                #camera.resolution = str(width)+'x'+ str(height)
-
-        elif 'up' in self.path:
-            camera.sharpness =  int(self.path.split('?')[1])
-        elif 'down' in self.path:
-            camera.sharpness =  int(self.path.split('?')[1])
-        elif 'left' in self.path:
-            camera.sharpness =  int(self.path.split('?')[1])
-        elif 'right' in self.path:
-            camera.sharpness =  int(self.path.split('?')[1])
-        elif 'zoom_in' in self.path:
-            camera.sharpness =  int(self.path.split('?')[1])
-        elif 'zoom_out' in self.path:
-            camera.sharpness =  int(self.path.split('?')[1])
-
+        elif 'shiftUp' in self.path:
+            if camera.crop[1] - .015 < 1:
+                camera.crop = (camera.crop[0], camera.crop[1] - .015, camera.crop[2],camera.crop[3])
+        elif 'shiftDown' in self.path:
+            if camera.crop[1] + .015 > 0:
+                camera.crop = (camera.crop[0], camera.crop[1] + .015, camera.crop[2],camera.crop[3])
+        elif 'shiftLeft' in self.path:
+            if camera.crop[0] - .015 < 1:
+                camera.crop = (camera.crop[0] - .015, camera.crop[1], camera.crop[2],camera.crop[3])
+        elif 'shiftRight' in self.path:
+            if camera.crop[0] + .015 > 0:
+                camera.crop = (camera.crop[0] + .015, camera.crop[1], camera.crop[2],camera.crop[3])
+        elif 'zoomIn' in self.path:
+            camera.crop = (camera.crop[0] + .05, camera.crop[1]+.05, camera.crop[2]-.1,camera.crop[3]-.1)
+        elif 'zoomOut' in self.path:
+            camera.crop = (camera.crop[0] - .05, camera.crop[1]-.05, camera.crop[2]+.1,camera.crop[3]+.1)
         elif 'sharpness' in self.path:
             camera.sharpness =  int(self.path.split('?')[1])
         elif 'contrast' in self.path:
             camera.contrast =  int(self.path.split('?')[1])
         elif 'brightness' in self.path:            
             camera.brightness = int(self.path.split('?')[1])
+        elif 'diffThresh' in self.path:            
+            diffThresh = int(self.path.split('?')[1])
+        elif 'ampThresh' in self.path:            
+            ampThresh = int(self.path.split('?')[1])
+        elif 'diffRate' in self.path:            
+            diffRate = int(self.path.split('?')[1])
+
+
         elif 'saturation' in self.path:            
             camera.saturation = int(self.path.split('?')[1])
         elif 'iso' in self.path:            
@@ -102,15 +137,21 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             camera.image_effect =  self.path.split('?')[1]
         elif 'color_effects' in self.path:            
             camera.color_effects = None
-        elif 'hflip' in self.path:
-            camera.hflip = False
-        elif 'vflip' in self.path:            
-            camera.vflip = False
-
-
+        elif 'hFlip' in self.path:
+            if camera.hflip == False:
+                camera.hflip = True
+            else:
+                camera.hflip = False
+        elif 'vFlip' in self.path:            
+            if camera.vflip == False:
+                camera.vflip = True
+            else:
+                camera.vflip = False
 
         if self.path == '/index.html':
-            PAGE = open('bideo.html','r').read()
+            
+           
+            PAGE = open(serverPath + '/bideo.html','r').read()
             content = PAGE.encode('utf-8')
             self.send_response(200)
             self.send_header('Content-Type', 'text/html')
@@ -118,17 +159,16 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(content)
         elif self.path == '/stream.mjpg':
+            global encodeImage, diffThresh, diffRate, frame2
             self.send_response(200)
             self.send_header('Age', 0)
             self.send_header('Cache-Control', 'no-cache, private')
             self.send_header('Pragma', 'no-cache')
             self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
             self.end_headers()
-            tempo = 60
-            tempoCount = 0
-            count = 0
-            if True:
-            #try:
+            s = 0
+            if True: #checking for frame difference is turned on
+                #try:
                 while True:
                     with output.condition:
                         output.condition.wait()
@@ -139,32 +179,68 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(frame)
                     self.wfile.write(b'\r\n')
-                    
-                    if tempoCount == 600  :
-                        print("making Sound Now nowwwww")
+                    if frameDiffCount == 0:  
                         frame2 = Image.open(io.BytesIO(frame))
-                        #foo = frame2.resize((60,40),Image.ANTIALIAS)
-                        foo = frame2.resize((30,20),Image.ANTIALIAS)
-                        foo.save('./output/current_pic.jpg')
-                        frame2.save('./output/current_pic_quality.jpg')
-                        
-                        imgencode.start('./output/current_pic.jpg', './output/current_pic.wav',1 )
-                        #spectrogram.start(foo, './80_150_'+str(count)+'_5.wav',1 )
-                        tempoCount = 0
-                        count = count + 1
-                    tempoCount = tempoCount + 1
+                        frame2.save(serverPath + '/output/current_pic.jpg')
+                    elif frameDiffCount == diffRate:
+                        print("calculating frame diff")
+                        frame3 = Image.open(io.BytesIO(frame))
+                        frame3.save(serverPath + '/output/current_pic2.jpg')
+                        frameDiffCount = 0
+                        absDiff = ImageChops.difference(frame2, frame3)
+                        width, height = absDiff.size
+                        rgb_im = absDiff.convert('RGB')
+                        s = 0
+                        for x in range(width):
+                            for y in range(height):
+                                r, g, b = rgb_im.getpixel((x, y))
+                                s = r + g + b + s
 
-                """
-            except Exception as e:
-                logging.warning(
-                        'Removed streaming client %s: %s',
-                        self.client_address, str(e))
-"""                
-        elif ".css" in self.path or ".js" in self.path or "png" in self.path or "jpg" in self.path :
-            PAGE = open(self.path[1:],'r').read()
+                    frameDiffCount += 1
+
+                    if s > diffThresh and encodeImage:
+                        print('ecoding due to frame diffe frame diff / threshold: ',s ,' / ',diffThresh , '= ', s  / diffThresh) 
+                        s = 0
+                        #encodeImage = False
+                        frame2 = Image.open(io.BytesIO(frame))
+                        frame2.save(serverPath + '/output/current_pic.jpg')
+                        
+                        #print("last modified: %s" % time.ctime(os.path.getmtime('./output/current_pic.wav')))
+                        #print("created: %s" % time.ctime(os.path.getctime('./output/current_pic.wav')))
+                        #modifiedTime = time.ctime(os.path.getmtime('./output/current_pic.wav'))
+                        #createdTime = time.ctime(os.path.getctime('./output/current_pic.wav'))
+                         
+                        #encodedOutput = 
+                        image_encoder.encodeObject(serverPath + '/output/current_pic.jpg', './output/current_pic.wav','.75' )
+                        #print(encodedOutput)
+                        #stdoutdata, stderrdata = encodedOutput.communicate()
+                        #print(stdoutdata)
+                        #print(stderrdata)
+                        #print(encodedOutput.returncode)
+                        #print("encodedOutput")
+
+                        play_sound.playAudioFile(serverPath + '/output/current_pic.wav')                        
+        elif ".css" in self.path or ".js"  in self.path or ".log"  in self.path or ".txt"  in self.path or ".json"  in self.path or ".csv" in self.path   :
+            PAGE = open(serverPath +'/'+ self.path[1:],'r').read()
             content = PAGE.encode('utf-8')
             self.send_response(200)
             #self.send_header('Content-Type', 'text/html')
+            self.send_header('Content-Length', len(content))
+
+
+            self.end_headers()
+            self.wfile.write(content)
+
+        elif ".wav" in self.path:
+            self.send_response(200)
+            self.end_headers()
+            with open(serverPath +'/'+ self.path[1:],'rb').read() as f:
+                for l in f: self.sendall(l)
+            self.close()
+        elif ".png" in self.path or ".jpg" in self.path :
+            PAGE = open(serverPath + '/' + self.path[1:],'rb').read()
+            content = PAGE
+            self.send_response(200)
             self.send_header('Content-Length', len(content))
             self.end_headers()
             self.wfile.write(content)
@@ -172,6 +248,11 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
 
+        #logging.info("Camera Crop: " , camera.crop)
+
+        #logging.info("threshold: " , threshold)
+        #logging.info("threshold: "+ length)
+        
 class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
@@ -193,5 +274,7 @@ def startCamera():
             camera.stop_recording()
 
 startCamera()
+
+
 
 
