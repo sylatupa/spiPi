@@ -1,3 +1,13 @@
+'''
+sudo apt-get install libasound2-dev libasound2 libasound2-plugins
+sudo apt-get install python-dev
+sudo pipenv install pyaudio
+sudo apt-get install libportaudio-dev
+sudo apt-get install portaudio19-dev
+sudo apt-get install pyaudio
+sudo apt-get install numpy
+'''
+
 import io
 import picamera
 import logging
@@ -44,6 +54,8 @@ camera = ''
 # CAMERA RESOLUTION
 width = 40
 height = 40
+width = int(1366/4)
+height = int(768/4)
 frameDiffCount = 0
 play_sound = ps.play_sound()
 image_encoder = imgencode_proc.encoder()
@@ -60,7 +72,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
     def do_GET(self):
         global x,y,width,height,effect_no,frame,area,frameDiffCount
         serverPath = os.path.dirname(os.path.realpath(__file__))
-        #logging.info('spyPi API CALL: '+self.path)
+	#logging.info('spyPi API CALL: '+self.path)
         if self.path == '/':
             self.path = '/index.html'
         elif 'chngCoor' in self.path:
@@ -167,59 +179,96 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
             self.end_headers()
             s = 0
-            if True: #checking for frame difference is turned on
+            if True: #True: #checking for frame difference is turned on
                 #try:
                 while True:
-                    with output.condition:
-                        output.condition.wait()
-                        frame = output.frame
-                    self.wfile.write(b'--FRAME\r\n')
-                    self.send_header('Content-Type', 'image/jpeg')
-                    self.send_header('Content-Length', len(frame))
-                    self.end_headers()
-                    self.wfile.write(frame)
-                    self.wfile.write(b'\r\n')
-                    if frameDiffCount == 0:  
-                        frame2 = Image.open(io.BytesIO(frame))
-                        frame2.save(serverPath + '/output/current_pic.jpg')
-                    elif frameDiffCount == diffRate:
-                        print("calculating frame diff")
-                        frame3 = Image.open(io.BytesIO(frame))
-                        frame3.save(serverPath + '/output/current_pic2.jpg')
-                        frameDiffCount = 0
-                        absDiff = ImageChops.difference(frame2, frame3)
-                        width, height = absDiff.size
-                        rgb_im = absDiff.convert('RGB')
-                        s = 0
-                        for x in range(width):
-                            for y in range(height):
-                                r, g, b = rgb_im.getpixel((x, y))
-                                s = r + g + b + s
+                    if False:
+                        with output.condition:
+                            output.condition.wait()
+                            frame = output.frame
+                        self.wfile.write(b'--FRAME\r\n')
+                        self.send_header('Content-Type', 'image/jpeg')
+                        self.send_header('Content-Length', len(frame))
+                        self.end_headers()
+                        self.wfile.write(frame)
+                        self.wfile.write(b'\r\n')
+                        if encodeImage:
+                            print("image")
+                            if frameDiffCount == 0:  
+                                frame2 = Image.open(io.BytesIO(frame))
+                                frame2.save(serverPath + '/output/current_pic.jpg')
+                            elif frameDiffCount == diffRate:
+                                print("calculating frame diff")
+                                frame3 = Image.open(io.BytesIO(frame))
+                                frame3.save(serverPath + '/output/current_pic2.jpg')
+                                frameDiffCount = 0
+                                absDiff = ImageChops.difference(frame2, frame3)
+                                width, height = absDiff.size
+                                rgb_im = absDiff.convert('RGB')
+                                s = 0
+                                for x in range(width):
+                                    for y in range(height):
+                                        r, g, b = rgb_im.getpixel((x, y))
+                                        s = r + g + b + s
 
-                    frameDiffCount += 1
+                            frameDiffCount += 1
 
-                    if s > diffThresh and encodeImage:
-                        print('ecoding due to frame diffe frame diff / threshold: ',s ,' / ',diffThresh , '= ', s  / diffThresh) 
-                        s = 0
-                        #encodeImage = False
-                        frame2 = Image.open(io.BytesIO(frame))
-                        frame2.save(serverPath + '/output/current_pic.jpg')
+                            if s > diffThresh and encodeImage:
+                                print('ecoding due to frame diffe frame diff / threshold: ',s ,' / ',diffThresh , '= ', s  / diffThresh) 
+                                s = 0
+                                #encodeImage = False
+                                frame2 = Image.open(io.BytesIO(frame))
+                                frame2.save(serverPath + '/output/current_pic.jpg')
+                                
+                                #modifiedTime = time.ctime(os.path.getmtime('./output/current_pic.wav'))
+                                #createdTime = time.ctime(os.path.getctime('./output/current_pic.wav'))
+                                 
+                                #encodedOutput = 
+                                image_encoder.encodeObject(serverPath + '/output/current_pic.jpg', './output/current_pic.wav','.75' )
+                                #print(encodedOutput)
+                                #stdoutdata, stderrdata = encodedOutput.communicate()
+                                #print(stdoutdata)
+                                #print(stderrdata)
+                                #print(encodedOutput.returncode)
+                                #print("encodedOutput")
+
+                                #play_sound.playAudioFile(serverPath + '/output/current_pic.wav')                        
+
+
+                    if True:
+                        with output.condition:
+                            output.condition.wait()
+                            frame = output.frame
+                        if frameDiffCount == 0:  
+                            frame2 = Image.open(io.BytesIO(frame))
+                            frame2.save(serverPath + '/output/current_pic.jpg')
+                            frameDiffCount = 1
+                        elif frameDiffCount >= 1:
+                            frame3 = Image.open(io.BytesIO(frame))
+                            frame3.save(serverPath + '/output/current_pic2.jpg')
+                            frameDiffCount = 0
+                            frame = ImageChops.difference(frame2, frame3)
+                            #width, height = absDiff.size
+                            #frame = frame.convert('RGB')
+                            imgBytes = io.BytesIO()
+                            frame.save(imgBytes, 'BMP')
+                            frame = imgBytes.getvalue()
+                            frameDiffCount = 0
+                            #s = 0
+                            #for x in range(width):
+                            #    for y in range(height):
+                            #        r, g, b = rgb_im.getpixel((x, y))
+                            #        s = r + g + b + s
+
+
+                            self.wfile.write(b'--FRAME\r\n')
+                            self.send_header('Content-Type', 'image/jpeg')
+                            self.send_header('Content-Length', len(frame))
+                            self.end_headers()
                         
-                        #print("last modified: %s" % time.ctime(os.path.getmtime('./output/current_pic.wav')))
-                        #print("created: %s" % time.ctime(os.path.getctime('./output/current_pic.wav')))
-                        #modifiedTime = time.ctime(os.path.getmtime('./output/current_pic.wav'))
-                        #createdTime = time.ctime(os.path.getctime('./output/current_pic.wav'))
-                         
-                        #encodedOutput = 
-                        image_encoder.encodeObject(serverPath + '/output/current_pic.jpg', './output/current_pic.wav','.75' )
-                        #print(encodedOutput)
-                        #stdoutdata, stderrdata = encodedOutput.communicate()
-                        #print(stdoutdata)
-                        #print(stderrdata)
-                        #print(encodedOutput.returncode)
-                        #print("encodedOutput")
+                            self.wfile.write(frame)
+                            self.wfile.write(b'\r\n')
 
-                        play_sound.playAudioFile(serverPath + '/output/current_pic.wav')                        
         elif ".css" in self.path or ".js"  in self.path or ".log"  in self.path or ".txt"  in self.path or ".json"  in self.path or ".csv" in self.path   :
             PAGE = open(serverPath +'/'+ self.path[1:],'r').read()
             content = PAGE.encode('utf-8')
@@ -232,11 +281,13 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.wfile.write(content)
 
         elif ".wav" in self.path:
+            print('start file')
             self.send_response(200)
             self.end_headers()
             with open(serverPath +'/'+ self.path[1:],'rb').read() as f:
                 for l in f: self.sendall(l)
             self.close()
+            print('done file')
         elif ".png" in self.path or ".jpg" in self.path :
             PAGE = open(serverPath + '/' + self.path[1:],'rb').read()
             content = PAGE
