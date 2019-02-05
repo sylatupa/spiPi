@@ -21,6 +21,7 @@ import socketserver
 from threading import Condition
 import http.server as server
 import os
+import numpy
 from PIL import Image
 from PIL import ImageChops
 import imgencode_proc 
@@ -52,10 +53,10 @@ h = 1
 camera = ''
 
 # CAMERA RESOLUTION
-width = 40
-height = 40
-width = int(1366/4)
-height = int(768/4)
+width =  20
+height = 20
+#width = int(1366/8)
+#height = int(768/8)
 frameDiffCount = 0
 play_sound = ps.play_sound()
 image_encoder = imgencode_proc.encoder()
@@ -179,6 +180,12 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
             self.end_headers()
             s = 0
+            frame2xList = []
+            frame2yList = []
+            frame3xList = []
+            frame3yList = []
+            x_buffered = []
+            x_max = 0
             if True: #True: #checking for frame difference is turned on
                 #try:
                 while True:
@@ -241,13 +248,25 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                             frame = output.frame
                         if frameDiffCount == 0:  
                             frame2 = Image.open(io.BytesIO(frame))
+                            frame2 = frame2.convert('L')
+                            frame2Array = numpy.array(frame2)
+                            frame2Matrix = numpy.matrix(frame2Array.reshape(width,height))
+                            x_mean = frame2Matrix.mean(0).sum()/width
+                            if x_max < x_mean :
+                                x_max = x_mean
+
+                            print(x_mean/x_max)
+                            
+                            
+                            #frame1xList = get_avg_x(frame2Array, 200)
                             frame2.save(serverPath + '/output/current_pic.jpg')
                             frameDiffCount = 1
                         elif frameDiffCount >= 1:
-                            frame3 = Image.open(io.BytesIO(frame))
+                            frame3 = (Image.open(io.BytesIO(frame))).convert('L')
                             frame3.save(serverPath + '/output/current_pic2.jpg')
                             frameDiffCount = 0
                             frame = ImageChops.difference(frame2, frame3)
+                            #frame = frame3
                             #width, height = absDiff.size
                             #frame = frame.convert('RGB')
                             imgBytes = io.BytesIO()
@@ -324,8 +343,22 @@ def startCamera():
         finally:
             camera.stop_recording()
 
+
+
+
+def get_avg_x(numpy_array, threshold=200):
+    x_list = []
+    """Binarize a numpy array."""
+    for i in range(len(numpy_array)):
+        for j in range(len(numpy_array[0])):
+            x_list[i] = (x_list[i] + numpy_array[i][j]) / 2
+            
+            
+            #if numpy_array[i][j] > threshold:
+            #    numpy_array[i][j] = 255
+            #else:
+            #    numpy_array[i][j] = 0
+    return x_list
+
+
 startCamera()
-
-
-
-
