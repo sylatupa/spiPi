@@ -6,6 +6,10 @@ sudo apt-get install libportaudio-dev
 sudo apt-get install portaudio19-dev
 sudo apt-get install pyaudio
 sudo apt-get install numpy
+
+pip3 install virtualenv --user  !!!!!!! got to be in the user not the global
+pip3 install opencv-python
+
 '''
 
 import io
@@ -21,9 +25,9 @@ import socketserver
 from threading import Condition
 import http.server as server
 import os
-import numpy
 from PIL import Image
 from PIL import ImageChops
+import numpy
 import imgencode_proc 
 import json
 import play_sound as ps
