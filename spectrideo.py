@@ -9,7 +9,10 @@ sudo apt-get install numpy
 '''
 
 import io
-import picamera
+try:
+    import picamera
+except ImportError:
+    is_picamera = True
 import logging
 
 LOG_FILENAME = 'logging.log'
@@ -61,6 +64,7 @@ frameDiffCount = 0
 play_sound = ps.play_sound()
 image_encoder = imgencode_proc.encoder()
 image_processor = imgprocessing_proc.processor()
+global encodeImage
 encodeImage = False
 area = (0,0,width,height)
 triggerPixelBox = [0,0,5,5]
@@ -172,7 +176,6 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(content)
         elif self.path == '/stream.mjpg':
-            global encodeImage, diffThresh, diffRate, frame2
             self.send_response(200)
             self.send_header('Age', 0)
             self.send_header('Cache-Control', 'no-cache, private')
