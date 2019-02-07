@@ -1,4 +1,4 @@
-#!/home/spy/spiPi/venv/bin/python
+#!/home/pi/spiPi/venv/bin/python
 
 import sys
 import getopt
