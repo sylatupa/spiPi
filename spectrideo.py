@@ -165,8 +165,8 @@ camera = ''
 # CAMERA RESOLUTION
 width =  20
 height = 20
-width = int(1366/8)
-height = int(768/8)
+width = int(1366/4)
+height = int(768/4)
 frameDiffCount = 0
 play_sound = ps.play_sound()
 image_encoder = imgencode_proc.encoder()
@@ -520,12 +520,8 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                             frame = output.frame
                         if frameDiffCount == 0:  
                             frame2 = Image.open(io.BytesIO(frame))
-                            #frame2 = frame2.convert('RGB')
-
-
                             frame = frame2.convert('RGB')
                             frame = numpy.array(frame)
-                            
                             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                             gray = cv2.GaussianBlur(gray, (21, 21), 0)
                      
@@ -556,18 +552,13 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                                     # and update the text
                                     (x, y, w, h) = cv2.boundingRect(c)
                                     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                                    text = "Occupied"                            
+                                    text = "Occupied"
+                                    print(x+w/2   ,'    ' ,y+h/2)
                                                 
-                            #frame1xList = get_avg_x(frame2Array, 200)
-                            #frame.save(serverPath + '/output/current_pic.jpg')
                             frame = Image.fromarray(frame)
                             imgBytes = io.BytesIO()
                             frame.save(imgBytes, 'BMP')
-                            
-                            
                             frame = imgBytes.getvalue()
-                            #frame = frame.tobytes()
-
                             self.wfile.write(b'--FRAME\r\n')
                             self.send_header('Content-Type', 'image/jpeg')
                             self.send_header('Content-Length', len(frame))
@@ -575,10 +566,6 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                         
                             self.wfile.write(frame)
                             self.wfile.write(b'\r\n')
-
-
-
-
 
         elif ".css" in self.path or ".js"  in self.path or ".log"  in self.path or ".txt"  in self.path or ".json"  in self.path or ".csv" in self.path   :
             PAGE = open(serverPath +'/'+ self.path[1:],'r').read()
