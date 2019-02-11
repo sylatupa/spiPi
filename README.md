@@ -36,6 +36,8 @@ Running headless:
 
 ### Installing
 
+(spiPi_requirements.txt) https://gist.github.com/sylatupa/e74248aba2906976b52d9d6011b660de
+
 
 ## Running the tests
 
@@ -61,7 +63,7 @@ Now open a browser and go the the ip address for the raspberry pi, and go to por
 
 ## Contributing
 
-# (comment) Please read [CONTRIBUTING.md](https://gist.github.com/sylatupa/4d0b51c97d2bd8cf210a60c0e7a7d175) for details on our code of conduct, and the process for submitting pull requests to us.
+#(comment) Please read [CONTRIBUTING.md](https://gist.github.com/sylatupa/4d0b51c97d2bd8cf210a60c0e7a7d175) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Versioning
 
