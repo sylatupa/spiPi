@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<header name = "Access-Control-Allow-Origin" value = "*" />
+			<meta http-equiv="Access-Control-Allow-Origin" content="*">
+			<meta content="en-us" http-equiv="Content-Language">
+			<meta charset="utf-8">
+			<meta content="An Interesting Title Goes Here" name="title">
+			<title>spiPi a digital culture video camera with IOT, object detection, and security features.</title>
+
+			<script
+						  src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+	integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
+ crossorigin="anonymous"></script>
+
+
+			<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-PDle/QlgIONtM1aqA2Qemk5gPOE7wFq8+Em+G/hmo5Iq0CCmYZLv3fVRDJ4MMwEA" crossorigin="anonymous">
+			<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/js/bootstrap.min.js" integrity="sha384-7aThvCh9TypR7fIc2HV4O/nFMVCBwyIUKL8XCtKE+8xgCgl/PQGuFsvShjr74PBp" crossorigin="anonymous"></script>
+			<script>
+				rotateCount=0
+function rotate(dir){
+
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/rotate?'+dir);
+	xhr.send(null);
+}
+function zoomIn(){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/zoomIn');
+	xhr.send(null);
+}
+function zoomOut(){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/zoomOut');
+	xhr.send(null);
+}
+function shiftLeft(){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/shiftLeft');
+	xhr.send(null);
+}
+function shiftRight(value){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/shiftRight');
+	xhr.send(null);
+}
+function shiftUp(){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/shiftUp');
+	xhr.send(null);
+}
+function shiftDown(value){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/shiftDown');
+	xhr.send(null);
+}
+function vFlip(value){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/vFlip');
+	xhr.send(null);
+}
+function hFlip(value){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/hFlip');
+	xhr.send(null);
+}
+
+function image_effect(value){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/image_effect?'+value);
+	xhr.send(null);
+}
+function contrast(value){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/contrast?'+value);
+	xhr.send(null);
+}
+function saturation(value){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', "/saturation?"+value);
+	xhr.send(null);
+}
+function brightness(value){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/brightness?'+value);
+	xhr.send(null);
+}
+
+function ampThresh(value){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/ampThresh?'+value);
+	xhr.send(null);
+}
+
+function diffThresh(value){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/diffThresh?'+value);
+	xhr.send(null);
+}
+function diffRate(value){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/diffRate?'+value);
+	xhr.send(null);
+}
+function reset(value){
+	if(value=='effects') {
+		image_effect('none');
+		contrast(0);
+		saturation(0);
+		brightness(52);
+		sharpness(0);
+		iso(450);
+
+		document.getElementById("contrast").value = 0
+		document.getElementById("saturation").value = 0
+		document.getElementById("brightness").value = 50
+		document.getElementById("iso").value = 400
+	}
+	if(value=='image'){
+		box = [0,0,600,600]
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', '/chngCoor?'+box);
+		xhr.send(null);
+	}
+}
+var pixelTrigger = false;
+function triggerPixel(){
+	pixelTrigger = true;
+}
+function iso(value){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/iso?'+value);
+	xhr.send(null);
+}
+function encodeImage(value){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/encodeImage');
+	xhr.send(null);
+}
+
+click=0
+x=0
+y=0
+w=1
+h=1
+//var img = new Image();
+//img.src = "192.168.0.66:8000/stream.mjpg";
+
+function getClickPosition(e) {
+	var parentPosition = getPosition(e.currentTarget);
+	console.log("parent position" + parentPosition);
+	var xPosition = e.clientX - parentPosition.x - (theThing.clientWidth / 2);
+	var yPosition = e.clientY - parentPosition.y - (theThing.clientHeight / 2);
+	if(click==0){
+		x=  xPosition;
+		y= yPosition;
+		click=1
+	}
+	else{
+		click=0
+		w = xPosition - x;
+		h = yPosition - y;
+		var box = [x, y,w,h];
+		console.log(box);
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', '/chngCoor?'+box);
+		xhr.send(null);
+	}
+	theThing.style.left = xPosition + "px";
+	theThing.style.top = yPosition + "px";
+}
+// Helper function to get an element's exact position
+function getPosition(el) {
+	var xPos = 0;
+	var yPos = 0;
+	while (el) {
+		if (el.tagName == "BODY") {
+			var xScroll = el.scrollLeft || document.documentElement.scrollLeft;
+			var yScroll = el.scrollTop || document.documentElement.scrollTop;
+
+			xPos += (el.offsetLeft - xScroll + el.clientLeft);
+			yPos += (el.offsetTop - yScroll + el.clientTop);
+		} else {
+			// for all other non-BODY elements
+			xPos += (el.offsetLeft - el.scrollLeft + el.clientLeft);
+			yPos += (el.offsetTop - el.scrollTop + el.clientTop);
+		}
+
+		el = el.offsetParent;
+	}
+	return {
+		x: xPos,
+		y: yPos
+	};
+}
+$(document).ready(function() {
+
+});
+			</script>
+			<style type="text/css">
+body {
+	line-height: 1;
+}
+
+#inputControls {
+	background-image: url("./output/current_pic.jpg");
+	background-repeat: unset;
+	background-attachment: initial;
+	background-position: 50% 50%; 
+}
+#contentContainer{
+	width: 600px;
+	height: 600px;
+
+	position: relative;
+}
+.controls {
+	height:40px;
+}
+#video, #controls{
+	width: 600;
+	height: 600px;
+	cursor: pointer;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+#thing {
+	z-index:10;
+	position: relative;
+	/*  left: 50px;
+top: 50px;
+	 */
+	height:40px;
+	width:40px;	
+	transition: left .5s cubic-bezier(.42,-0.3,.78,1.25), top .5s cubic-bezier(.42,-0.3,.78,1.25);
+}
+			</style>
+			<body class="bg-light">
+				<div class="container">
+					<div class="row ">
+						<div  class="col-md-7">
+							<div id="contentContainer">
+								<img id="video" src="stream.mjpg">
+							</div>
+						</div>
+						<div id="inputControls" class="col-md-5 row">
+							<!--
+	       <div class="col-md-3">
+	       <div id="songtitleholder">	      </div>
+	       <div id="songartistholder">	      </div>
+	       <div id="songalbumholder">	      </div>
+	       </div>
+							-->
+							<p>Some effects are only applied to the preview, not the capture, and likewise.<br><div  class=" col-sm-4 controls row"><p class="labelText">Effect Types</p><select onclick="image_effect(this.value)" id="effectTypes"></select></div></p>
+
+							<div class="col-sm-4"><p class="labelText">Brightness</p><input type="range" min="0" max="100" value="50" class="slider" id="brightness" onchange="brightness(this.value)" ></div>
+							<div class="col-sm-4 "><p class="labelText">Contrast</p><input type="range" min="-100" max="100" value="0" class="slider" id="contrast" onchange="contrast(this.value)" ></div>
+							<div class="col-sm-4 "><p class="labelText">Saturation</p><input type="range" min="-100" max="100" value="0" class="slider" id="saturation" onchange="saturation(this.value)" ></div>
+							<div class="col-md-4 "><p class="labelText">ISO</p><input type="range" min="100" max="1600" value="400" class="slider" id="iso" onchange="iso(this.value)" ></div>
+							<div class="col-md-4 "><p class="labelText">Sharpness</p><input type="range" min="-100" max="100" value="0" class="slider" id="contrast" onchange="sharpness(this.value)" ></div>
+							<div><p class="labelText">1 -- Rotate & Flip</p><button class="btn btn-primary" onclick="rotate('left')">rotate left</button><button class="btn btn-primary" onclick="rotate('right')">rotate right</button><button class="btn btn-info" onclick="hFlip()">Horizonal Flip</button><button class="btn btn-info" onclick="vFlip()">Vertical Flip</button></div>
+							<div><p class="labelText">2 -- Select the Region on the video</p>
+								<img id="thing" src="sound.png">
+							</div>
+							<div><p  class="labelText">3 Fine tune Zoom and Shift</p>
+								<button class="btn btn-info" onclick="zoomIn()">+</button><button class="btn btn-info" onclick="zoomOut()">-</button>
+								<div style="text-align:center;width:320px;">
+									<h3>
+										<button class="btn btn-dark" onclick="shiftUp()" ontouchstart="shiftUp()" onmousedown="shiftUp()">Up&uarr;</button><br>
+										<button  class="btn btn-dark"  onclick="shiftLeft()" ontouchstart="shiftLeft()" onmousedown="shiftLeft()" >Left&#8592;</button>
+										<button  class="btn btn-dark"  onclick="shiftRight()" ontouchstart="shiftRight()" onmousedown="shiftRight()" >Right&rarr;</button><br>
+										<button  class="btn btn-dark" onclick="shiftDown()" ontouchstart="shiftDown()" onmousedown="shiftDown()" >Down&darr;</button>
+									</h3>
+								</div>   
+							</div>
+							<div>
+								<button class="btn btn-danger" onclick="encodeImage()">Start_Stop</button>
+								<button class="btn btn-warning" onclick="reset('image')">Reset Zoom</button>
+								<button class="btn btn-warning" onclick="reset('effects')">Reset Effects</button>
+								<div class="row">
+									<div class="col-md-4"><p class="labelText">Diff Thresh</p><input type="range" min="1000" max="45000" value="30000" class="slider" id="diffThresh" onchange="diffThresh(this.value)" ></div>
+									<div class="col-md-4"><p class="labelText">Diff Rate</p><input type="range" min="0" max="200" value="100" class="slider" id="diffRate" onchange="diffRate(this.value)" ></div>
+								</div>	
+								<!--	      <div class="col-sm-4"><p class="labelText">Amplitude Thresh</p><input type="range" min="0" max="256" value="200" class="slider" id="ampThresh" onchange="ampThresh(this.value)" ></div> -->
+
+							</div>
+							<a class="labelText" href="./output/current_pic.jpg">Current Image</a><a class="labelText" href="./output/current_pic.wav">Current Wave File</a>
+						</div>
+					</div>
+				</div>
+			</body>
+			<script>
+				var theThing = document.querySelector("#thing");
+var container = document.querySelector("#contentContainer");
+container.addEventListener("click", getClickPosition, false);
+effectTypes = [ 'deinterlace1','deinterlace2', 'colorpoint', 'denoise', 'gpen', 'negative', 'oilpaint', 'none', 'hatch', 'pastel', 'blur', 'watercolor', 'solarize', 'saturation', 'posterise', 'film', 'sketch', 'cartoon', 'emboss', 'colorbalance', 'washedout', 'colorswap'];
+var x = document.getElementById("effectTypes");
+for(i=0; i < effectTypes.length; i++){
+	var option = document.createElement("option");
+	option.text = effectTypes[i];
+	x.add(option);
+}
+
+			</script>
+			<style>
+.slidecontainer {
+	padding:5px;
+	margin:5px;
+}
+.slider {
+	-webkit-appearance: none;
+	width: 100%;
+	height: 30px;
+	border-radius: 5px;  
+	background: #d3d3d3;
+	outline: none;
+	opacity: 0.7;
+	-webkit-transition: .2s;
+	transition: opacity .2s;
+}
+
+.slider::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 25px;
+	height: 25px;
+	border-radius: 50%; 
+	background: #4CAF50;
+	cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+	background: #4CAF50;
+	cursor: pointer;
+}
+
+
+  .labelText {
+	  -webkit-appearance: none;
+	  width: 100%;
+	  height: 30px;
+	  border-radius: 5px;  
+	  background: #f9f9f9;
+	  outline: none;
+	  opacity: 0.85;
+	  -webkit-transition: .2s;
+	  transition: opacity .8s;
+	  padding:0px;
+	  margin:0px;
+  }
+
+  .labelText::-webkit-slider-thumb {
+	  -webkit-appearance: none;
+	  appearance: none;
+	  width: 25px;
+	  height: 25px;
+	  border-radius: 50%; 
+	  background: #4CAF50;
+	  cursor: pointer;
+  }
+
+  .labelText::-moz-range-thumb {
+	  width: 25px;
+	  height: 25px;
+	  border-radius: 50%;
+	  background: #4CAF50;
+	  cursor: pointer;
+  }
+
+
+			</style>
+
+
+</html>
+
+

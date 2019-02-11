@@ -1,7 +1,0 @@
-DEBUG:imgencode_proc:outIMGdebug
-INFO:imgencode_proc:outIMGinfo
-WARNING:imgencode_proc:outIMGwarning
-DEBUG:root:This message should go to the log file
-DEBUG:root:outA
-INFO:root:outA
-WARNING:root:outA

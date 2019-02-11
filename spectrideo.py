@@ -1,127 +1,11 @@
-'''
-sudo apt-get install libasound2-dev libasound2 libasound2-plugins
-sudo apt-get install python-dev
-sudo pipenv install pyaudio
-sudo apt-get install libportaudio-dev
-sudo apt-get install portaudio19-dev
-pip install pyaudio in environment. sudo apt-get install pyaudio
-
-sudo apt-get install numpy
-
-sudo apt-get install libjpeg9-dev
-pip install pillow
-pip3 install virtualenv --user  !!!!!!! got to be in the user not the global
-pip3 install opencv-python
-
-Raspbian Stretch includes configuration for pip to use piwheels by default. If you're using an alternate distribution (or an older version of Raspbian), you can use piwheels by placing the following lines in /etc/pip.conf:
-
-[global]
-extra-index-url=https://www.piwheels.org/simple
-
-pip install opencv-python
-https://blog.piwheels.org/new-opencv-builds/
-
-pi@spypi:~/spiPi $ sudo apt-get install libatlas3-base libwebp5
-Reading package lists... Done
-Building dependency tree
-Reading state information... Done
-libwebp5 is already the newest version.
-libwebp5 set to manually installed.
-The following package was automatically installed and is no longer required:
-  libportaudio0
-Use 'apt-get autoremove' to remove it.
-The following NEW packages will be installed:
-  libatlas3-base
-0 upgraded, 1 newly installed, 0 to remove and 162 not upgraded.
-Need to get 1,841 kB of archives.
-After this operation, 8,229 kB of additional disk space will be used.
-https://blog.piwheels.org/new-opencv-builds/
-https://blog.piwheels.org/new-opencv-builds/
-https://blog.piwheels.org/new-opencv-builds/
-
-https://blog.piwheels.org/new-opencv-builds/https://blog.piwheels.org/new-opencv-builds/https://blog.piwheels.org/new-opencv-builds/https://blog.piwheels.org/new-opencv-builds/
-
-sudo apt-get install libatlas3-base libwebp5 libtiff5 libjasper1 libilmbase6 libopenexr6  libgstreamer1.0-0 libavcodec56 libavformat libavutil54 libswscale3 libqtgui4 libqt4-test libqtcore4
-libavformat56    libavformat-dev
-(venv) pi@spypi:~/spiPi $ sudo apt-get install libatlas3-base libwebp5 libtiff5 libjasper1 libilmbase6 libopenexr6  libgstreamer1.0-0 libavcodec56 libavformat56 libavutil libswscale3 libqtgui4 libqt4-test libqtcore4
-libavutil54    libavutil-dev
-(venv) pi@spypi:~/spiPi $ sudo apt-get install libatlas3-base libwebp5 libtiff5 libjasper1 libilmbase6 libopenexr6  libgstreamer1.0-0 libavcodec libavformat56 libavutil54 libswscale3 libqtgui4 libqt4-test libqtcore4
-libavcodec56         libavcodec-dev       libavcodec-extra     libavcodec-extra-56
-(venv) pi@spypi:~/spiPi $ sudo apt-get install libatlas3-base libwebp5 libtiff5 libjasper1 libilmbase6 libopenexr6  libgstreamer1.0-0 libavcodec56 libavformat56 libavutil54 libswscale libqtgui4 libqt4-test libqtcore4
-libswscale3     libswscale-dev
-(venv) pi@spypi:~/spiPi $ sudo apt-get install libatlas3-base libwebp5 libtiff5 libjasper1 libilmbase6 libopenexr6  libgstreamer1.0-0 libavcodec56 libavformat56 libavutil54 libswscale3 libqtgui4 libqt4-test libqtcore4
-Reading package lists... Done
-Building dependency tree
-Reading state information... Done
-libatlas3-base is already the newest version.
-libgstreamer1.0-0 is already the newest version.
-libgstreamer1.0-0 set to manually installed.
-libilmbase6 is already the newest version.
-libilmbase6 set to manually installed.
-libopenexr6 is already the newest version.
-libopenexr6 set to manually installed.
-libqtcore4 is already the newest version.
-libqtcore4 set to manually installed.
-libqtgui4 is already the newest version.
-libqtgui4 set to manually installed.
-libwebp5 is already the newest version.
-The following package was automatically installed and is no longer required:
-  libportaudio0
-Use 'apt-get autoremove' to remove it.
-Suggested packages:
-  libjasper-runtime
-The following NEW packages will be installed:
-  libqt4-test
-The following packages will be upgraded:
-  libavcodec56 libavformat56 libavutil54 libjasper1 libswscale3 libtiff5
-6 upgraded, 1 newly installed, 0 to remove and 156 not upgraded.
-Need to get 5,681 kB/6,087 kB of archives.
-After this operation, 236 kB of additional disk space will be used.
-Do you want to continue? [Y/n] y
-Get:1 http://mirrordirector.raspbian.org/raspbian/ jessie/main libavutil54 armhf 6:11.12-1~deb8u5+rpi1 [164 kB]
-Get:2 http://mirrordirector.raspbian.org/raspbian/ jessie/main libavcodec56 armhf 6:11.12-1~deb8u5+rpi1 [4,497 kB]
-Get:3 http://mirrordirector.raspbian.org/raspbian/ jessie/main libavformat56 armhf 6:11.12-1~deb8u5+rpi1 [859 kB]
-Get:4 http://mirrordirector.raspbian.org/raspbian/ jessie/main libswscale3 armhf 6:11.12-1~deb8u5+rpi1 [160 kB]
-Fetched 5,681 kB in 5s (1,065 kB/s)
-(Reading database ... 78188 files and directories currently installed.)
-Preparing to unpack .../libavutil54_6%3a11.12-1~deb8u5+rpi1_armhf.deb ...
-Unpacking libavutil54:armhf (6:11.12-1~deb8u5+rpi1) over (6:11.11-1~deb8u1+rpi1) ...
-Preparing to unpack .../libavcodec56_6%3a11.12-1~deb8u5+rpi1_armhf.deb ...
-Unpacking libavcodec56:armhf (6:11.12-1~deb8u5+rpi1) over (6:11.11-1~deb8u1+rpi1) ...
-Preparing to unpack .../libavformat56_6%3a11.12-1~deb8u5+rpi1_armhf.deb ...
-Unpacking libavformat56:armhf (6:11.12-1~deb8u5+rpi1) over (6:11.11-1~deb8u1+rpi1) ...
-Preparing to unpack .../libjasper1_1.900.1-debian1-2.4+deb8u5_armhf.deb ...
-Unpacking libjasper1:armhf (1.900.1-debian1-2.4+deb8u5) over (1.900.1-debian1-2.4+deb8u3) ...
-Selecting previously unselected package libqt4-test:armhf.
-Preparing to unpack .../libqt4-test_4%3a4.8.6+git64-g5dc8b2b+dfsg-3+deb8u1+rpi1_armhf.deb ...
-Unpacking libqt4-test:armhf (4:4.8.6+git64-g5dc8b2b+dfsg-3+deb8u1+rpi1) ...
-Preparing to unpack .../libswscale3_6%3a11.12-1~deb8u5+rpi1_armhf.deb ...
-Unpacking libswscale3:armhf (6:11.12-1~deb8u5+rpi1) over (6:11.11-1~deb8u1+rpi1) ...
-Preparing to unpack .../libtiff5_4.0.3-12.3+deb8u7_armhf.deb ...
-Unpacking libtiff5:armhf (4.0.3-12.3+deb8u7) over (4.0.3-12.3+deb8u5) ...
-Setting up libavutil54:armhf (6:11.12-1~deb8u5+rpi1) ...
-Setting up libavcodec56:armhf (6:11.12-1~deb8u5+rpi1) ...
-Setting up libavformat56:armhf (6:11.12-1~deb8u5+rpi1) ...
-Setting up libjasper1:armhf (1.900.1-debian1-2.4+deb8u5) ...
-Setting up libqt4-test:armhf (4:4.8.6+git64-g5dc8b2b+dfsg-3+deb8u1+rpi1) ...
-Setting up libswscale3:armhf (6:11.12-1~deb8u5+rpi1) ...
-Setting up libtiff5:armhf (4.0.3-12.3+deb8u7) ...
-Processing triggers for libc-bin (2.19-18+deb8u10) ...
-
-
-https://www.pyimagesearch.com/2015/07/20/install-opencv-3-0-and-python-3-4-on-ubuntu/
-'''
-
 import io
 try:
     import picamera
 except ImportError:
     is_picamera = True
-import logging
+import mqtt_client.mqtt_client as mqtt_client
 
-LOG_FILENAME = 'logging.log'
-#logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
-logging.basicConfig(level=logging.DEBUG)
+
 import os.path, time
 import sys
 import socketserver
@@ -137,6 +21,7 @@ import imgencode_proc
 import json
 import play_sound as ps
 import imgprocessing_proc
+import statistics
 
 # This program has attribution to https://github.com/alexadam/img-encode
 class StreamingOutput(object):
@@ -163,10 +48,10 @@ h = 1
 camera = ''
 
 # CAMERA RESOLUTION
-width =  20
-height = 20
-width = int(1366/4)
-height = int(768/4)
+width = 240 
+height = 200
+#width = int(1366/4)
+#height = int(768/4)
 frameDiffCount = 0
 play_sound = ps.play_sound()
 image_encoder = imgencode_proc.encoder()
@@ -184,8 +69,14 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
     def do_GET(self):
         global x,y,width,height,effect_no,frame,area,frameDiffCount
         serverPath = os.path.dirname(os.path.realpath(__file__))
-	#logging.info('spyPi API CALL: '+self.path)
-        if self.path == '/':
+        if self.path == '/' or self.path == '/index.html':
+            PAGE = open(serverPath + '/index.html','r').read()
+            content = PAGE.encode('utf-8')
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/html')
+            self.send_header('Content-Length', len(content))
+            self.end_headers()
+            self.wfile.write(content)
             self.path = '/index.html'
         elif 'chngCoor' in self.path:
             self.send_response(200)
@@ -272,16 +163,6 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             else:
                 camera.vflip = False
 
-        if self.path == '/index.html':
-            
-           
-            PAGE = open(serverPath + '/bideo.html','r').read()
-            content = PAGE.encode('utf-8')
-            self.send_response(200)
-            self.send_header('Content-Type', 'text/html')
-            self.send_header('Content-Length', len(content))
-            self.end_headers()
-            self.wfile.write(content)
         elif self.path == '/stream.mjpg':
             self.send_response(200)
             self.send_header('Age', 0)
@@ -295,6 +176,19 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             frame3xList = []
             frame3yList = []
             x_buffered = []
+            y_buffered = []
+            numReadings = 10 
+            x_total = 0
+            y_total = 0
+            readIndex = 0
+            for i in range(0,numReadings):
+                x_buffered.insert(i, 0)
+
+            for i in range(0,numReadings):
+                y_buffered.insert(i,0)
+
+            
+            
             x_max = 0
             firstFrame = None
             if True: #True: #checking for frame difference is turned on
@@ -540,20 +434,38 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
 
                             cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
                             cnts = imutils.grab_contours(cnts)
-                     
-                            # loop over the contours
 
-                            for c in cnts:
+                            # loop over the contours
+                            for c in cnts[1:]:
                                     # if the contour is too small, ignore it
-                                    if cv2.contourArea(c) < 95:
+                                    if cv2.contourArea(c) < 10:
                                             continue
-                     
+ 
                                     # compute the bounding box for the contour, draw it on the frame,
                                     # and update the text
                                     (x, y, w, h) = cv2.boundingRect(c)
+                                    #mqtt_client.publish_data2("spyPi/object/x",x)
+                                    #mqtt_client.publish_data2("spyPi/object/y",y)
+                                    #mqtt_client.publish_data2("spyPi/object/w",w)
+                                    #mqtt_client.publish_data2("spyPi/object/h",h)
+
+                                    x_total = x_total - x_buffered[readIndex]
+                                    x_buffered[readIndex] = x+w/2
+                                    x_total = x_total + x_buffered[readIndex]
+                                    readIndex = readIndex + 1
+
+                                    y_total = y_total - y_buffered[readIndex]
+                                    y_buffered[readIndex] = y+h/2
+                                    y_total = y_total + y_buffered[readIndex]
+                                    readIndex = readIndex + 1
+                                    if readIndex >= numReadings:
+                                        readIndex = 0
+                                        #send now
+                                        mqtt_client.publish_data2("spyPi/object/x_avg", statistics.median(x_buffered))
+                                        mqtt_client.publish_data2("spyPi/object/y_avg", statistics.median(y_buffered) )
+                                        #mqtt_client.publish_data2("spyPi/object/y_avg", y_total/numReadings)
+
                                     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                                    text = "Occupied"
-                                    print(x+w/2   ,'    ' ,y+h/2)
                                                 
                             frame = Image.fromarray(frame)
                             imgBytes = io.BytesIO()
@@ -597,11 +509,6 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
 
-        #logging.info("Camera Crop: " , camera.crop)
-
-        #logging.info("threshold: " , threshold)
-        #logging.info("threshold: "+ length)
-        
 class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
@@ -621,23 +528,5 @@ def startCamera():
             return camera
         finally:
             camera.stop_recording()
-
-
-
-
-def get_avg_x(numpy_array, threshold=200):
-    x_list = []
-    """Binarize a numpy array."""
-    for i in range(len(numpy_array)):
-        for j in range(len(numpy_array[0])):
-            x_list[i] = (x_list[i] + numpy_array[i][j]) / 2
-            
-            
-            #if numpy_array[i][j] > threshold:
-            #    numpy_array[i][j] = 255
-            #else:
-            #    numpy_array[i][j] = 0
-    return x_list
-
 
 startCamera()
