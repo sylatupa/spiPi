@@ -91,7 +91,13 @@ function ampThresh(value){
 	xhr.open('GET', '/ampThresh?'+value);
 	xhr.send(null);
 }
+function showDelta(){
 
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/showDelta');
+	xhr.send(null);
+}
+f
 function diffThresh(value){
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', '/diffThresh?'+value);
@@ -132,6 +138,26 @@ function iso(value){
 	xhr.open('GET', '/iso?'+value);
 	xhr.send(null);
 }
+
+function frameDeltaMin(value){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/frameDeltaMin?'+value);
+	xhr.send(null);
+}
+
+function sharpness(value){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/sharpness?'+value);
+	xhr.send(null);
+}
+
+function smallestContour(value){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/smallestContour?'+value);
+	xhr.send(null);
+}
+
+
 function encodeImage(value){
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', '/encodeImage');
@@ -257,8 +283,16 @@ top: 50px;
 							<div class="col-sm-4"><p class="labelText">Brightness</p><input type="range" min="0" max="100" value="50" class="slider" id="brightness" onchange="brightness(this.value)" ></div>
 							<div class="col-sm-4 "><p class="labelText">Contrast</p><input type="range" min="-100" max="100" value="0" class="slider" id="contrast" onchange="contrast(this.value)" ></div>
 							<div class="col-sm-4 "><p class="labelText">Saturation</p><input type="range" min="-100" max="100" value="0" class="slider" id="saturation" onchange="saturation(this.value)" ></div>
-							<div class="col-md-4 "><p class="labelText">ISO</p><input type="range" min="100" max="1600" value="400" class="slider" id="iso" onchange="iso(this.value)" ></div>
-							<div class="col-md-4 "><p class="labelText">Sharpness</p><input type="range" min="-100" max="100" value="0" class="slider" id="contrast" onchange="sharpness(this.value)" ></div>
+							<div class="col-sm-4 "><p class="labelText">ISO</p><input type="range" min="100" max="1600" value="400" class="slider" id="iso" onchange="iso(this.value)" ></div>
+
+
+							<div class="col-sm-4 "><p class="labelText">Sharpness</p><input type="range" min="-100" max="100" value="0" class="slider" id="sharpness" onchange="sharpness(this.value)" ></div>
+
+							<div class="col-sm-4 "><p class="labelText">Frame Delta Min</p><input type="range" min="1" max="255" value="25" class="slider" id="frameDeltaMin" onchange="frameDeltaMin(this.value)" ></div>	
+							<div class="col-sm-4 "><p class="labelText">Smallest Contour</p><input type="range" min="1" max="255" value="125" class="slider" id="smallestContour" onchange="smallestContour(this.value)" ></div>
+
+
+
 							<div><p class="labelText">1 -- Rotate & Flip</p><button class="btn btn-primary" onclick="rotate('left')">rotate left</button><button class="btn btn-primary" onclick="rotate('right')">rotate right</button><button class="btn btn-info" onclick="hFlip()">Horizonal Flip</button><button class="btn btn-info" onclick="vFlip()">Vertical Flip</button></div>
 							<div><p class="labelText">2 -- Select the Region on the video</p>
 								<img id="thing" src="sound.png">
@@ -275,6 +309,7 @@ top: 50px;
 								</div>   
 							</div>
 							<div>
+								<button class="btn btn-danger" onclick="showDelta()">Show Delta</button>
 								<button class="btn btn-danger" onclick="encodeImage()">Start_Stop</button>
 								<button class="btn btn-warning" onclick="reset('image')">Reset Zoom</button>
 								<button class="btn btn-warning" onclick="reset('effects')">Reset Effects</button>

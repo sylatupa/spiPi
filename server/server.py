@@ -56,20 +56,18 @@ frameDiffCount = 0
 play_sound = ps.play_sound()
 image_encoder = imgencode_proc.encoder()
 image_processor = imgprocessing_proc.processor()
-global encodeImage, frameDeltaMin, smallestContour, showDelta
+global encodeImage
 encodeImage = False
 area = (0,0,width,height)
 triggerPixelBox = [0,0,5,5]
 diffThresh = 40000
 diffRate = 80
-frameDeltaMin = 30
-smallestContour = 120
-showDelta = False
+
 ampThresh = 200
 class StreamingHandler(server.BaseHTTPRequestHandler):
-    global camera, output,x,y,width,height,effect_no,frame,area, encodeImage, frameDiffCount, diffThresh, showDelta
+    global camera, output,x,y,width,height,effect_no,frame,area, encodeImage, frameDiffCount, diffThresh
     def do_GET(self):
-        global x,y,width,height,effect_no,frame,area,frameDiffCount, frameDeltaMin, smallestContour, showDelta
+        global x,y,width,height,effect_no,frame,area,frameDiffCount
         serverPath = os.path.dirname(os.path.realpath(__file__))
         if self.path == '/' or self.path == '/index.html':
             PAGE = open(serverPath + '/index.html','r').read()
@@ -103,24 +101,6 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                 encodeImage = True
             else:
                 encodeImage=False
-
-        elif 'showDelta' in self.path:
-            self.send_response(200)
-            self.end_headers()
-            if showDelta==False:
-                showDelta = True
-            else:
-                showDelta=False
-
-
-
-        elif 'smallestContour' in self.path:
-            smallestContour = int(self.path.split('?')[1])
-
-
-        elif 'frameDeltaMin' in self.path:
-            frameDeltaMin = int(self.path.split('?')[1])
-
         elif 'rotate' in self.path:
             if self.path.split('?')[1] == 'right':
                 camera.rotation = camera.rotation + 90
@@ -197,7 +177,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             frame3yList = []
             x_buffered = []
             y_buffered = []
-            numReadings = 20 
+            numReadings = 10 
             x_total = 0
             y_total = 0
             readIndex = 0
@@ -206,12 +186,228 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
 
             for i in range(0,numReadings):
                 y_buffered.insert(i,0)
+
+            
             
             x_max = 0
             firstFrame = None
             if True: #True: #checking for frame difference is turned on
                 #try:
                 while True:
+                    if False:
+                        with output.condition:
+                            output.condition.wait()
+                            frame = output.frame
+                        if False:  
+                            print('here')
+                            #imgBytes = io.BytesIO(frame)
+                            #frame.save(imgBytes, 'BMP')
+                            imgBytes = io.BytesIO()
+                            frame.save(imgBytes, 'BMP')
+                            frame = imgBytes.getvalue()
+
+                            self.wfile.write(b'--FRAME\r\n')
+                            self.send_header('Content-Type', 'image/jpeg')
+                            self.send_header('Content-Length', len(frame))
+                            self.end_headers()
+                        
+                            self.wfile.write(frame)
+                            self.wfile.write(b'\r\n')
+                    
+                            
+                            '''
+                            frame = frame2.convert('RGB')
+                            frame = numpy.array(frame)
+                            
+                            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                            gray = cv2.GaussianBlur(gray, (21, 21), 0)
+                     
+                            # if the first frame is None, initialize it
+                            if firstFrame is None:
+                                firstFrame = gray
+                                continue
+                            # compute the absolute difference between the current frame and
+                            # first frame
+                            frameDelta = cv2.absdiff(firstFrame, gray)
+                            thresh = cv2.threshold(frameDelta, 25, 255, cv2.THRESH_BINARY)[1]
+                     
+                            # dilate the thresholded image to fill in holes, then find contours
+                            # on thresholded image
+                            thresh = cv2.dilate(thresh, None, iterations=2)
+
+                            cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                            cnts = imutils.grab_contours(cnts)
+                     
+                            # loop over the contours
+
+                            for c in cnts:
+                                    # if the contour is too small, ignore it
+                                    if cv2.contourArea(c) < 95:
+                                            continue
+                     
+                                    # compute the bounding box for the contour, draw it on the frame,
+                                    # and update the text
+                                    (x, y, w, h) = cv2.boundingRect(c)
+                                    cv2.rectangle(frame2, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                                    text = "Occupied"                            
+                                                
+                            #frame1xList = get_avg_x(frame2Array, 200)
+                            #frame.save(serverPath + '/output/current_pic.jpg')
+                            '''
+                            self.wfile.write(b'--FRAME\r\n')
+                            self.send_header('Content-Type', 'image/jpeg')
+                            self.send_header('Content-Length', len(frame2))
+                            self.end_headers()
+                        
+                            self.wfile.write(frame2)
+                            self.wfile.write(b'\r\n')
+                        '''                                      
+                        elif False:
+                            frame3 = (Image.open(io.BytesIO(frame))).convert('L')
+                            frame3.save(serverPath + '/output/current_pic2.jpg')
+                            frameDiffCount = 0
+                            frame = ImageChops.difference(frame2, frame3)
+                            #frame = frame3
+                            #width, height = absDiff.size
+                            #frame = frame.convert('RGB')
+                            imgBytes = io.BytesIO()
+                            frame.save(imgBytes, 'BMP')
+                            frame = imgBytes.getvalue()
+                            frameDiffCount = 0
+                            #s = 0
+                            #for x in range(width):
+                            #    for y in range(height):
+                            #        r, g, b = rgb_im.getpixel((x, y))
+                            #        s = r + g + b + s
+
+
+                            self.wfile.write(b'--FRAME\r\n')
+                            self.send_header('Content-Type', 'image/jpeg')
+                            self.send_header('Content-Length', len(frame))
+                            self.end_headers()
+                        
+                            self.wfile.write(frame)
+                            self.wfile.write(b'\r\n')
+                    
+                    if False:
+                        with output.condition:
+                            output.condition.wait()
+                            frame = output.frame
+                        self.wfile.write(b'--FRAME\r\n')
+                        self.send_header('Content-Type', 'image/jpeg')
+                        self.send_header('Content-Length', len(frame))
+                        self.end_headers()
+                        self.wfile.write(frame)
+                        self.wfile.write(b'\r\n')
+                        if encodeImage:
+                            print("image")
+                            if frameDiffCount == 0:  
+                                frame2 = Image.open(io.BytesIO(frame))
+                                frame2.save(serverPath + '/output/current_pic.jpg')
+                            elif frameDiffCount == diffRate:
+                                print("calculating frame diff")
+                                frame3 = Image.open(io.BytesIO(frame))
+                                frame3.save(serverPath + '/output/current_pic2.jpg')
+                                frameDiffCount = 0
+                                absDiff = ImageChops.difference(frame2, frame3)
+                                width, height = absDiff.size
+                                rgb_im = absDiff.convert('RGB')
+                                s = 0
+                                for x in range(width):
+                                    for y in range(height):
+                                        r, g, b = rgb_im.getpixel((x, y))
+                                        s = r + g + b + s
+
+                            frameDiffCount += 1
+
+                            if s > diffThresh and encodeImage:
+                                print('ecoding due to frame diffe frame diff / threshold: ',s ,' / ',diffThresh , '= ', s  / diffThresh) 
+                                s = 0
+                                #encodeImage = False
+                                frame2 = Image.open(io.BytesIO(frame))
+                                frame2.save(serverPath + '/output/current_pic.jpg')
+                                
+                                #modifiedTime = time.ctime(os.path.getmtime('./output/current_pic.wav'))
+                                #createdTime = time.ctime(os.path.getctime('./output/current_pic.wav'))
+                                 
+                                #encodedOutput = 
+                                image_encoder.encodeObject(serverPath + '/output/current_pic.jpg', './output/current_pic.wav','.75' )
+                                #print(encodedOutput)
+                                #stdoutdata, stderrdata = encodedOutput.communicate()
+                                #print(stdoutdata)
+                                #print(stderrdata)
+                                #print(encodedOutput.returncode)
+                                #print("encodedOutput")
+
+                                #play_sound.playAudioFile(serverPath + '/output/current_pic.wav')                        
+                    '''
+                    if False:
+                        with output.condition:
+                            output.condition.wait()
+                            frame = output.frame
+                        if frameDiffCount == 0:  
+                            frame2 = Image.open(io.BytesIO(frame))
+                            frame2 = frame2.convert('L')
+                            frame2Array = numpy.array(frame2)
+                            frame2Matrix = numpy.matrix(frame2Array.reshape(width,height))
+                            x_mean = frame2Matrix.mean(0).sum()/width
+                            if x_max < x_mean :
+                                x_max = x_mean
+
+                            print(x_mean/x_max)
+                            
+                            
+                            #frame1xList = get_avg_x(frame2Array, 200)
+                            frame2.save(serverPath + '/output/current_pic.jpg')
+                            frameDiffCount = 1
+                        elif frameDiffCount >= 1:
+                            frame3 = (Image.open(io.BytesIO(frame))).convert('L')
+                            frame3.save(serverPath + '/output/current_pic2.jpg')
+                            frameDiffCount = 0
+                            frame = ImageChops.difference(frame2, frame3)
+                            #frame = frame3
+                            #width, height = absDiff.size
+                            #frame = frame.convert('RGB')
+                            imgBytes = io.BytesIO()
+                            frame.save(imgBytes, 'BMP')
+                            frame = imgBytes.getvalue()
+                            frameDiffCount = 0
+                            #s = 0
+                            #for x in range(width):
+                            #    for y in range(height):
+                            #        r, g, b = rgb_im.getpixel((x, y))
+                            #        s = r + g + b + s
+
+
+                            self.wfile.write(b'--FRAME\r\n')
+                            self.send_header('Content-Type', 'image/jpeg')
+                            self.send_header('Content-Length', len(frame))
+                            self.end_headers()
+                        
+                            self.wfile.write(frame)
+                            self.wfile.write(b'\r\n')
+
+
+                    '''
+                    plain video out 
+                    '''
+                    if False:
+                        with output.condition:
+                            output.condition.wait()
+                            frame = output.frame
+                        if frameDiffCount == 0:  
+                            frame2 = Image.open(io.BytesIO(frame))
+                            #frame2 = frame2.convert('RGB')
+                            imgBytes = io.BytesIO()
+                            frame2.save(imgBytes, 'BMP')
+                            frame = imgBytes.getvalue()
+                            self.wfile.write(b'--FRAME\r\n')
+                            self.send_header('Content-Type', 'image/jpeg')
+                            self.send_header('Content-Length', len(frame))
+                            self.end_headers()
+                        
+                            self.wfile.write(frame)
+                            self.wfile.write(b'\r\n')
                     if True:
                         with output.condition:
                             output.condition.wait()
@@ -221,7 +417,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                             frame = frame2.convert('RGB')
                             frame = numpy.array(frame)
                             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                            #gray = cv2.GaussianBlur(gray, (21, 21), 0)
+                            gray = cv2.GaussianBlur(gray, (21, 21), 0)
                      
                             # if the first frame is None, initialize it
                             if firstFrame is None:
@@ -230,27 +426,24 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                             # compute the absolute difference between the current frame and
                             # first frame
                             frameDelta = cv2.absdiff(firstFrame, gray)
-                            thresh = cv2.threshold(frameDelta, frameDeltaMin, 255, cv2.THRESH_BINARY)[1]
+                            thresh = cv2.threshold(frameDelta, 25, 255, cv2.THRESH_BINARY)[1]
+                     
                             # dilate the thresholded image to fill in holes, then find contours
                             # on thresholded image
                             thresh = cv2.dilate(thresh, None, iterations=2)
+
                             cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
                             cnts = imutils.grab_contours(cnts)
-                            #frame = cv2.drawKeypoints(gray, blobs, numpy.array([]), (0,0,255))#, cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-                            # Show keypoints
-                            if showDelta:
-                                frame = thresh
-                            for c in cnts[:1]:
-                                    print(len(cnts), " " , len(cnts[:4]))
+
+                            # loop over the contours
+                            for c in cnts[1:]:
                                     # if the contour is too small, ignore it
-                                    if cv2.contourArea(c) < smallestContour:
+                                    if cv2.contourArea(c) < 10:
                                             continue
-                                            break
  
                                     # compute the bounding box for the contour, draw it on the frame,
                                     # and update the text
                                     (x, y, w, h) = cv2.boundingRect(c)
-                                    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                                     #mqtt_client.publish_data2("spyPi/object/x",x)
                                     #mqtt_client.publish_data2("spyPi/object/y",y)
                                     #mqtt_client.publish_data2("spyPi/object/w",w)
@@ -272,6 +465,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                                         mqtt_client.publish_data2("spyPi/object/y_avg", statistics.median(y_buffered) )
                                         #mqtt_client.publish_data2("spyPi/object/y_avg", y_total/numReadings)
 
+                                    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                                                 
                             frame = Image.fromarray(frame)
                             imgBytes = io.BytesIO()
