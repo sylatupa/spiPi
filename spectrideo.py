@@ -1,3 +1,6 @@
+# spectridio can be found here:
+# https://github.com/sylatupa/spiPi
+
 import io
 try:
     import picamera
